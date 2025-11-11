@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\Users\T F\Documents\laravel-ussd\phpunit.xml.dist" tests="12" assertions="27" errors="0" failures="0" skipped="0" time="0.407867">
+    <testsuite name="Laravel Ussd Test Suite" tests="12" assertions="27" errors="0" failures="0" skipped="0" time="0.407867">
+      <testsuite name="Vendor\LaravelUssd\Tests\Feature\SessionContinuityTest" file="C:\Users\T F\Documents\laravel-ussd\tests\Feature\SessionContinuityTest.php" tests="2" assertions="3" errors="0" failures="0" skipped="0" time="0.245125">
+        <testcase name="test_continuity_prompt_on_redial" file="C:\Users\T F\Documents\laravel-ussd\tests\Feature\SessionContinuityTest.php" line="19" class="Vendor\LaravelUssd\Tests\Feature\SessionContinuityTest" classname="Vendor.LaravelUssd.Tests.Feature.SessionContinuityTest" assertions="2" time="0.230159"/>
+        <testcase name="test_continuity_resume_selection" file="C:\Users\T F\Documents\laravel-ussd\tests\Feature\SessionContinuityTest.php" line="49" class="Vendor\LaravelUssd\Tests\Feature\SessionContinuityTest" classname="Vendor.LaravelUssd.Tests.Feature.SessionContinuityTest" assertions="1" time="0.014966"/>
+      </testsuite>
+      <testsuite name="Vendor\LaravelUssd\Tests\Feature\UssdFlowTest" file="C:\Users\T F\Documents\laravel-ussd\tests\Feature\UssdFlowTest.php" tests="3" assertions="7" errors="0" failures="0" skipped="0" time="0.058149">
+        <testcase name="test_it_loads_initial_state" file="C:\Users\T F\Documents\laravel-ussd\tests\Feature\UssdFlowTest.php" line="11" class="Vendor\LaravelUssd\Tests\Feature\UssdFlowTest" classname="Vendor.LaravelUssd.Tests.Feature.UssdFlowTest" assertions="3" time="0.020430"/>
+        <testcase name="test_it_processes_user_input" file="C:\Users\T F\Documents\laravel-ussd\tests\Feature\UssdFlowTest.php" line="27" class="Vendor\LaravelUssd\Tests\Feature\UssdFlowTest" classname="Vendor.LaravelUssd.Tests.Feature.UssdFlowTest" assertions="2" time="0.020509"/>
+        <testcase name="test_session_persistence" file="C:\Users\T F\Documents\laravel-ussd\tests\Feature\UssdFlowTest.php" line="53" class="Vendor\LaravelUssd\Tests\Feature\UssdFlowTest" classname="Vendor.LaravelUssd.Tests.Feature.UssdFlowTest" assertions="2" time="0.017210"/>
+      </testsuite>
+      <testsuite name="Vendor\LaravelUssd\Tests\Unit\MenuTest" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\MenuTest.php" tests="5" assertions="11" errors="0" failures="0" skipped="0" time="0.076150">
+        <testcase name="test_menu_builder_creates_text" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\MenuTest.php" line="10" class="Vendor\LaravelUssd\Tests\Unit\MenuTest" classname="Vendor.LaravelUssd.Tests.Unit.MenuTest" assertions="1" time="0.015129"/>
+        <testcase name="test_menu_builder_creates_options" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\MenuTest.php" line="17" class="Vendor\LaravelUssd\Tests\Unit\MenuTest" classname="Vendor.LaravelUssd.Tests.Unit.MenuTest" assertions="2" time="0.018924"/>
+        <testcase name="test_menu_builder_creates_listing" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\MenuTest.php" line="30" class="Vendor\LaravelUssd\Tests\Unit\MenuTest" classname="Vendor.LaravelUssd.Tests.Unit.MenuTest" assertions="3" time="0.015067"/>
+        <testcase name="test_menu_builder_paginates_items" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\MenuTest.php" line="42" class="Vendor\LaravelUssd\Tests\Unit\MenuTest" classname="Vendor.LaravelUssd.Tests.Unit.MenuTest" assertions="4" time="0.012871"/>
+        <testcase name="test_menu_expects_input" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\MenuTest.php" line="55" class="Vendor\LaravelUssd\Tests\Unit\MenuTest" classname="Vendor.LaravelUssd.Tests.Unit.MenuTest" assertions="1" time="0.014159"/>
+      </testsuite>
+      <testsuite name="Vendor\LaravelUssd\Tests\Unit\UssdResponseTest" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\UssdResponseTest.php" tests="2" assertions="6" errors="0" failures="0" skipped="0" time="0.028443">
+        <testcase name="test_continue_response_format" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\UssdResponseTest.php" line="10" class="Vendor\LaravelUssd\Tests\Unit\UssdResponseTest" classname="Vendor.LaravelUssd.Tests.Unit.UssdResponseTest" assertions="3" time="0.015112"/>
+        <testcase name="test_end_response_format" file="C:\Users\T F\Documents\laravel-ussd\tests\Unit\UssdResponseTest.php" line="19" class="Vendor\LaravelUssd\Tests\Unit\UssdResponseTest" classname="Vendor.LaravelUssd.Tests.Unit.UssdResponseTest" assertions="3" time="0.013331"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

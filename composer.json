@@ -1,0 +1,55 @@
+{
+  "name": "vendor/laravel-ussd",
+  "description": "USSD application builder for Laravel 11 with session continuity",
+  "type": "library",
+  "license": "MIT",
+  "version": "1.0.0",
+  "keywords": [
+    "laravel",
+    "ussd",
+    "session",
+    "continuity"
+  ],
+  "authors": [
+    {
+      "name": "Your Name",
+      "email": "you@example.com"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": "^11.0",
+    "illuminate/console": "^11.0",
+    "illuminate/cache": "^11.0",
+    "illuminate/events": "^11.0",
+    "illuminate/routing": "^11.0",
+    "illuminate/contracts": "^11.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^9.0",
+    "phpunit/phpunit": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Vendor\\LaravelUssd\\": "src/"
+    },
+    "files": [
+      "src/Support/laravel-contracts-stub.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Vendor\\LaravelUssd\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Vendor\\LaravelUssd\\Providers\\LaravelUssdServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  }
+}
