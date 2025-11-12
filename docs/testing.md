@@ -93,7 +93,7 @@ Helper classes for testing:
        }
      ],
      "require": {
-       "catalyster/laravel-ussd": "@dev"
+       "catalysteria/laravel-ussd": "@dev"
      }
    }
    ```
@@ -101,7 +101,7 @@ Helper classes for testing:
 3. **Install Package**
 
    ```bash
-   composer update catalyster/laravel-ussd
+   composer update catalysteria/laravel-ussd
    ```
 
 4. **Publish Configuration**

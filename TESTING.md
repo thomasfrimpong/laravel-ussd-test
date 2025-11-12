@@ -26,7 +26,7 @@
        }
      ],
      "require": {
-       "catalyster/laravel-ussd": "@dev"
+       "catalysteria/laravel-ussd": "@dev"
      }
    }
    ```
@@ -34,7 +34,7 @@
 2. **Install and test:**
 
    ```bash
-   composer update catalyster/laravel-ussd
+   composer update catalysteria/laravel-ussd
    php artisan vendor:publish --provider="Vendor\\LaravelUssd\\Providers\\LaravelUssdServiceProvider"
    php artisan ussd:state WelcomeState
    ```
