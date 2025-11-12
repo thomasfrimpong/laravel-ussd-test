@@ -26,7 +26,7 @@
        }
      ],
      "require": {
-       "tf/laravel-ussd": "@dev"
+       "catalyst/laravel-ussd": "@dev"
      }
    }
    ```
@@ -34,7 +34,7 @@
 2. **Install and test:**
 
    ```bash
-   composer update tf/laravel-ussd
+   composer update catalyst/laravel-ussd
    php artisan vendor:publish --provider="Vendor\\LaravelUssd\\Providers\\LaravelUssdServiceProvider"
    php artisan ussd:state WelcomeState
    ```
