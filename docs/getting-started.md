@@ -2,7 +2,7 @@
 
 1. Install the package:
    ```bash
-   composer require catalyst/laravel-ussd
+   composer require catalyster/laravel-ussd
    ```
 2. Publish config and stubs:
    ```bash

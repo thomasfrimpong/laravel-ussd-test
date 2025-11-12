@@ -1,5 +1,5 @@
 {
-  "name": "catalyst/laravel-ussd",
+  "name": "catalyster/laravel-ussd",
   "description": "USSD application builder for Laravel 11 with session continuity",
   "type": "library",
   "license": "MIT",

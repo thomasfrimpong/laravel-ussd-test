@@ -44,7 +44,7 @@ vendor/bin/phpunit tests/Feature
        }
      ],
      "require": {
-       "catalyst/laravel-ussd": "@dev"
+       "catalyster/laravel-ussd": "@dev"
      }
    }
    ```
@@ -52,7 +52,7 @@ vendor/bin/phpunit tests/Feature
 3. **Install the package**:
 
    ```bash
-   composer update catalyst/laravel-ussd
+   composer update catalyster/laravel-ussd
    ```
 
 4. **Publish config**:

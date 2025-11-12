@@ -16,7 +16,7 @@ Laravel 11 package for building state-driven USSD applications with session cont
 
 1. Install via Composer:
    ```bash
-   composer require catalyst/laravel-ussd
+   composer require catalyster/laravel-ussd
    ```
 2. Publish configuration:
    ```bash
