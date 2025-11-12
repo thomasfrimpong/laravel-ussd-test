@@ -5,6 +5,7 @@ This guide explains how to test the Laravel USSD package before publishing it.
 ## Prerequisites
 
 1. **Install Dependencies**
+
    ```bash
    composer install
    ```
@@ -15,6 +16,7 @@ This guide explains how to test the Laravel USSD package before publishing it.
 ## Running Tests
 
 ### Run All Tests
+
 ```bash
 composer test
 # or
@@ -22,6 +24,7 @@ vendor/bin/phpunit
 ```
 
 ### Run Specific Test Suites
+
 ```bash
 # Run only unit tests
 vendor/bin/phpunit tests/Unit
@@ -34,6 +37,7 @@ vendor/bin/phpunit tests/Feature/UssdFlowTest.php
 ```
 
 ### Run with Coverage
+
 ```bash
 vendor/bin/phpunit --coverage-html coverage
 ```
@@ -41,21 +45,29 @@ vendor/bin/phpunit --coverage-html coverage
 ## Test Structure
 
 ### Unit Tests (`tests/Unit/`)
+
 Test individual components in isolation:
+
 - `MenuTest.php` - Menu builder functionality
 - `UssdResponseTest.php` - Response formatting
 
 ### Feature Tests (`tests/Feature/`)
+
 Test complete flows and integrations:
+
 - `UssdFlowTest.php` - Basic USSD flow testing
 - `SessionContinuityTest.php` - Session resume functionality
 
 ### Test Fixtures (`tests/Fixtures/`)
+
 Reusable test states and actions:
+
 - `WelcomeState.php` - Sample state for testing
 
 ### Test Support (`tests/Support/`)
+
 Helper classes for testing:
+
 - `UssdTestHarness.php` - Utility for simulating USSD sessions
 
 ## Testing in a Real Laravel Application
@@ -63,6 +75,7 @@ Helper classes for testing:
 ### Method 1: Local Path Repository
 
 1. **Create a Test Laravel Application**
+
    ```bash
    composer create-project laravel/laravel test-ussd-app
    cd test-ussd-app
@@ -70,42 +83,48 @@ Helper classes for testing:
 
 2. **Add Package as Local Path**
    Edit `composer.json` in your test app:
+
    ```json
    {
-       "repositories": [
-           {
-               "type": "path",
-               "url": "../laravel-ussd"
-           }
-       ],
-       "require": {
-           "vendor/laravel-ussd": "@dev"
+     "repositories": [
+       {
+         "type": "path",
+         "url": "../laravel-ussd"
        }
+     ],
+     "require": {
+       "tf/laravel-ussd": "@dev"
+     }
    }
    ```
 
 3. **Install Package**
+
    ```bash
-   composer update vendor/laravel-ussd
+   composer update tf/laravel-ussd
    ```
 
 4. **Publish Configuration**
+
    ```bash
    php artisan vendor:publish --provider="Vendor\\LaravelUssd\\Providers\\LaravelUssdServiceProvider"
    ```
 
 5. **Create Test States**
+
    ```bash
    php artisan ussd:state WelcomeState
    php artisan ussd:state MenuState
    ```
 
 6. **Test the Route**
+
    ```bash
    php artisan serve
    ```
-   
+
    Then test with a tool like Postman or curl:
+
    ```bash
    curl -X POST http://localhost:8000/ussd \
      -d "sessionId=test123" \
@@ -189,24 +208,28 @@ Verify the generated files are correct.
 ## Common Testing Scenarios
 
 ### 1. Basic Flow Test
+
 - Initial state loads correctly
 - User input is processed
 - State transitions work
 - Session ends properly
 
 ### 2. Menu Building Test
+
 - Text rendering
 - Option formatting
 - Pagination
 - Input expectations
 
 ### 3. Session Management Test
+
 - Session persistence
 - Context data storage
 - Session clearing
 - Continuity metadata
 
 ### 4. Error Handling Test
+
 - Invalid input handling
 - Missing state handling
 - Session timeout
@@ -228,7 +251,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: "8.3"
       - run: composer install
       - run: composer test
 ```
@@ -236,23 +259,26 @@ jobs:
 ## Troubleshooting
 
 ### Tests Fail with "Class not found"
+
 - Run `composer dump-autoload`
 - Check namespace matches file location
 
 ### Cache Issues
+
 - Clear cache: `php artisan cache:clear`
 - Use array cache driver in tests (already configured)
 
 ### Session Issues
+
 - Ensure cache driver is set to 'array' in test environment
 - Check session repository binding
 
 ## Next Steps
 
 After testing:
+
 1. Fix any failing tests
 2. Add test coverage for edge cases
 3. Update documentation
 4. Tag a release version
 5. Publish to Packagist
-

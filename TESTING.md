@@ -3,6 +3,7 @@
 ## Quick Start
 
 1. **Install dependencies:**
+
    ```bash
    composer install
    ```
@@ -15,23 +16,25 @@
 ## Test in a Laravel App
 
 1. **Add to test app's `composer.json`:**
+
    ```json
    {
-       "repositories": [
-           {
-               "type": "path",
-               "url": "../laravel-ussd"
-           }
-       ],
-       "require": {
-           "vendor/laravel-ussd": "@dev"
+     "repositories": [
+       {
+         "type": "path",
+         "url": "../laravel-ussd"
        }
+     ],
+     "require": {
+       "tf/laravel-ussd": "@dev"
+     }
    }
    ```
 
 2. **Install and test:**
+
    ```bash
-   composer update vendor/laravel-ussd
+   composer update tf/laravel-ussd
    php artisan vendor:publish --provider="Vendor\\LaravelUssd\\Providers\\LaravelUssdServiceProvider"
    php artisan ussd:state WelcomeState
    ```
@@ -45,4 +48,3 @@
    ```
 
 For detailed testing instructions, see `docs/testing.md`.
-

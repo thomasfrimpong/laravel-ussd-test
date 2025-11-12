@@ -2,7 +2,7 @@
 
 1. Install the package:
    ```bash
-   composer require vendor/laravel-ussd
+   composer require tf/laravel-ussd
    ```
 2. Publish config and stubs:
    ```bash

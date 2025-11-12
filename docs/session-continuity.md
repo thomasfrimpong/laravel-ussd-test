@@ -27,4 +27,4 @@ Update `config/ussd.php`:
 
 ## Custom Prompts
 
-Publish the language files and edit `resources/lang/vendor/laravel-ussd/en/messages.php` to localize resume text.
+Publish the language files and edit `resources/lang/tf/laravel-ussd/en/messages.php` to localize resume text.
