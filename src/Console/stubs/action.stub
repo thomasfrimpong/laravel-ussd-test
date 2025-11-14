@@ -5,7 +5,7 @@ namespace DummyNamespace;
 use Vendor\LaravelUssd\Support\AbstractAction;
 use Vendor\LaravelUssd\Support\Context;
 
-class DummyAction extends AbstractAction
+class DummyClass extends AbstractAction
 {
     public function handle(Context $context, string $input): mixed
     {
@@ -14,4 +14,3 @@ class DummyAction extends AbstractAction
         return null;
     }
 }
-
