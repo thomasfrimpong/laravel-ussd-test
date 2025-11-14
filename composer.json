@@ -3,7 +3,7 @@
   "description": "USSD application builder for Laravel 8-12 with session continuity",
   "type": "library",
   "license": "MIT",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "keywords": [
     "laravel",
     "ussd",
