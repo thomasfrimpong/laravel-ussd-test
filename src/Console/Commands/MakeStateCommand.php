@@ -34,7 +34,12 @@ class MakeStateCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/../stubs/state.stub';
+        $stubPath = realpath(__DIR__ . '/../stubs/state.stub');
+        if ($stubPath === false) {
+            // Fallback: construct path manually
+            $stubPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'state.stub';
+        }
+        return $stubPath;
     }
 
     /**

@@ -34,7 +34,12 @@ class MakeActionCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/../stubs/action.stub';
+        $stubPath = realpath(__DIR__ . '/../stubs/action.stub');
+        if ($stubPath === false) {
+            // Fallback: construct path manually
+            $stubPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'action.stub';
+        }
+        return $stubPath;
     }
 
     /**
