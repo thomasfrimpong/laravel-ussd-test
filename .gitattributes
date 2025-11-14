@@ -1,0 +1,4 @@
+# Ensure stub files are included in Composer package
+src/stubs/*.stub export-ignore=false
+stubs/*.stub export-ignore=false
+
