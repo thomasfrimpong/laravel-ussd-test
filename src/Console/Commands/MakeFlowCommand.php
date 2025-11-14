@@ -64,8 +64,22 @@ class MakeFlowCommand extends Command
         $stateStubPath = realpath(__DIR__ . '/../stubs/state.stub') ?: dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'state.stub';
         $actionStubPath = realpath(__DIR__ . '/../stubs/action.stub') ?: dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'action.stub';
         
-        $stateStub = str_replace('DummyState', $name . 'State', $this->files->get($stateStubPath));
-        $actionStub = str_replace('DummyAction', $name . 'Action', $this->files->get($actionStubPath));
+        // Replace DummyNamespace and DummyClass placeholders
+        $rootNamespace = $this->laravel->getNamespace();
+        $stateNamespace = config('ussd.state_namespace', $rootNamespace . '\\Ussd\\States');
+        $actionNamespace = config('ussd.action_namespace', $rootNamespace . '\\Ussd\\Actions');
+        
+        $stateStubContent = $this->files->get($stateStubPath);
+        $stateStub = str_replace(['DummyNamespace', 'DummyClass'], [
+            $stateNamespace,
+            $name . 'State'
+        ], $stateStubContent);
+        
+        $actionStubContent = $this->files->get($actionStubPath);
+        $actionStub = str_replace(['DummyNamespace', 'DummyClass'], [
+            $actionNamespace,
+            $name . 'Action'
+        ], $actionStubContent);
 
         // Write generated files
         $this->files->put($statePath, $stateStub);
