@@ -59,8 +59,9 @@ class MakeFlowCommand extends Command
         }
 
         // Load and customize stub files
-        $stateStubPath = realpath(__DIR__ . '/../stubs/state.stub') ?: dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'state.stub';
-        $actionStubPath = realpath(__DIR__ . '/../stubs/action.stub') ?: dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'action.stub';
+        // Go up two levels from src/Console/Commands/ to src/, then to stubs/
+        $stateStubPath = realpath(__DIR__ . '/../../stubs/state.stub') ?: dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'state.stub';
+        $actionStubPath = realpath(__DIR__ . '/../../stubs/action.stub') ?: dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'action.stub';
         
         $stateStub = str_replace('DummyState', $name . 'State', $this->files->get($stateStubPath));
         $actionStub = str_replace('DummyAction', $name . 'Action', $this->files->get($actionStubPath));
