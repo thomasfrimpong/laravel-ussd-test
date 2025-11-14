@@ -59,8 +59,8 @@ class MakeFlowCommand extends Command
         }
 
         // Load and customize stub files
-        $stateStub = str_replace('DummyState', $name . 'State', $this->files->get(__DIR__ . '/../../stubs/state.stub'));
-        $actionStub = str_replace('DummyAction', $name . 'Action', $this->files->get(__DIR__ . '/../../stubs/action.stub'));
+        $stateStub = str_replace('DummyState', $name . 'State', $this->files->get(__DIR__ . '/../stubs/state.stub'));
+        $actionStub = str_replace('DummyAction', $name . 'Action', $this->files->get(__DIR__ . '/../stubs/action.stub'));
 
         // Write generated files
         $this->files->put($statePath, $stateStub);

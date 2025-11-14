@@ -1,0 +1,28 @@
+<?php
+
+namespace DummyNamespace;
+
+use Vendor\LaravelUssd\Support\AbstractState;
+use Vendor\LaravelUssd\Support\Context;
+use Vendor\LaravelUssd\Support\UssdResponse;
+use Vendor\LaravelUssd\Menu\Menu;
+
+class DummyState extends AbstractState
+{
+    protected function buildMenu(Context $context): Menu
+    {
+        return (new Menu())
+            ->text('Example menu')
+            ->option('1', 'Next');
+    }
+
+    public function next(Context $context, string $input): ?string
+    {
+        if ($input === '1') {
+            return 'App\\Ussd\\States\\NextState';
+        }
+
+        return null;
+    }
+}
+

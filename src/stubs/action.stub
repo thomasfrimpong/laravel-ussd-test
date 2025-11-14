@@ -1,0 +1,17 @@
+<?php
+
+namespace DummyNamespace;
+
+use Vendor\LaravelUssd\Support\AbstractAction;
+use Vendor\LaravelUssd\Support\Context;
+
+class DummyAction extends AbstractAction
+{
+    public function handle(Context $context, string $input): mixed
+    {
+        // Perform action and return outcome
+
+        return null;
+    }
+}
+

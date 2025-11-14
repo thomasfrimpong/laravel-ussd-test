@@ -34,7 +34,7 @@ class MakeStateCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/../../stubs/state.stub';
+        return __DIR__ . '/../stubs/state.stub';
     }
 
     /**
