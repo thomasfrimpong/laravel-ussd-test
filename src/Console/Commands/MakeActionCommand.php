@@ -34,11 +34,12 @@ class MakeActionCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        // Go up two levels from src/Console/Commands/ to src/, then to stubs/
-        $stubPath = realpath(__DIR__ . '/../../stubs/action.stub');
+        // Laravel's GeneratorCommand resolves stubs relative to Console directory
+        // So from src/Console/Commands/, we go up one level to src/Console/, then to stubs/
+        $stubPath = realpath(__DIR__ . '/../stubs/action.stub');
         if ($stubPath === false) {
-            // Fallback: construct path manually (go up two directories)
-            $stubPath = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'action.stub';
+            // Fallback: construct path manually (go up one directory to Console, then to stubs)
+            $stubPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'action.stub';
         }
         return $stubPath;
     }
