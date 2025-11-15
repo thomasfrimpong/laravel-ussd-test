@@ -28,3 +28,14 @@ Laravel 11 package for building state-driven USSD applications with session cont
    ```
 
 See `docs/` for detailed usage.
+
+## Development
+
+### Auto-Update Packagist
+
+To automatically update Packagist when you push changes, see [Packagist Webhook Setup Guide](docs/packagist-webhook-setup.md).
+
+Quick setup options:
+- **GitHub Webhook** (Recommended): Configure webhook in GitHub repository settings
+- **GitHub Actions**: Uses the workflow in `.github/workflows/packagist-update.yml`
+- **Manual Script**: Run `scripts/update-packagist.sh` or `scripts/update-packagist.bat`

@@ -1,0 +1,22 @@
+name: Update Packagist
+
+on:
+  push:
+    branches:
+      - initial-commit  # Change to your main branch name
+    tags:
+      - 'v*'  # Trigger on version tags (e.g., v1.0.10)
+
+jobs:
+  update-packagist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Packagist
+        run: |
+          echo "Triggering Packagist update..."
+          curl -X POST "https://packagist.org/api/update-package?username=${{ secrets.PACKAGIST_USERNAME }}&apiToken=${{ secrets.PACKAGIST_API_TOKEN }}"
+          echo "Packagist update triggered successfully!"
+        env:
+          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
+          PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
+
