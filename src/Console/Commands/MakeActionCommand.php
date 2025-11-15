@@ -56,4 +56,24 @@ class MakeActionCommand extends GeneratorCommand
     {
         return config('ussd.action_namespace', $rootNamespace . '\\Ussd\\Actions');
     }
+
+    /**
+     * Build the class with the given name.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function buildClass($name)
+    {
+        $stub = $this->files->get($this->getStub());
+        
+        // Replace namespace and class placeholders
+        $stub = str_replace(
+            ['DummyNamespace', 'DummyClass'],
+            [$this->qualifyClass($name), class_basename($name)],
+            $stub
+        );
+
+        return $stub;
+    }
 }
