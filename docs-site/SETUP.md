@@ -40,10 +40,19 @@ This guide will help you set up and deploy the documentation site to GitHub Page
 
 1. **Enable GitHub Pages**
 
-   - Go to your repository settings on GitHub
-   - Navigate to "Pages" in the left sidebar
-   - Under "Source", select "GitHub Actions"
+   - Go to your repository settings on GitHub (Settings → Pages)
+   - Under "Source", select **"GitHub Actions"** (not "Deploy from a branch")
+   - If you don't see "GitHub Actions" as an option, you may need to:
+     - Make sure you have push access to the repository
+     - Wait a few minutes after creating the repository
+     - Try refreshing the page
    - The workflow will automatically build and deploy when you push to the main branch
+
+2. **Verify Pages is Enabled**
+
+   - After enabling, you should see a "GitHub Actions" badge or indicator in the Pages settings
+   - The first deployment may take a few minutes to complete
+   - Check the "Actions" tab to see the build progress
 
 2. **Custom Domain (Optional)**
 
