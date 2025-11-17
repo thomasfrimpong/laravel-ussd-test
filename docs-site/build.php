@@ -15,6 +15,8 @@ use Illuminate\View\FileViewFinder;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Compilers\BladeCompiler;
+use ReflectionClass;
+use Throwable;
 
 // Create container
 $container = new Container();
@@ -32,13 +34,44 @@ $finder->addNamespace('docs', __DIR__ . '/source/docs');
 // Create Blade compiler
 $compiler = new BladeCompiler($filesystem, __DIR__ . '/build_local/cache');
 
-// Create view factory
-$factory = new Factory(
-    $events,
-    $finder,
-    new PhpEngine($filesystem),
-    new CompilerEngine($compiler)
-);
+// Create view factory - try Laravel 11+ approach first, fall back to Laravel 8-10
+// Laravel 11+ uses EngineResolver, Laravel 8-10 uses individual engines
+$factory = null;
+
+// Try Laravel 11+ approach (EngineResolver)
+if (class_exists('Illuminate\View\Engines\EngineResolver')) {
+    try {
+        $resolver = new \Illuminate\View\Engines\EngineResolver();
+        $resolver->register('blade', function () use ($compiler) {
+            return new CompilerEngine($compiler);
+        });
+        $resolver->register('php', function () use ($filesystem) {
+            return new PhpEngine($filesystem);
+        });
+        $factory = new Factory($resolver, $events, $finder);
+    } catch (Throwable $e) {
+        // If this fails, try Laravel 8-10 approach
+        $factory = null;
+    }
+}
+
+// Fall back to Laravel 8-10 approach (individual engines)
+if ($factory === null) {
+    // Check if PhpEngine needs Filesystem (Laravel 9+)
+    $phpEngineReflection = new ReflectionClass(PhpEngine::class);
+    $phpEngineParams = $phpEngineReflection->getConstructor()->getParameters();
+    
+    if (count($phpEngineParams) > 0) {
+        // PhpEngine requires Filesystem (Laravel 9+)
+        $phpEngine = new PhpEngine($filesystem);
+    } else {
+        // PhpEngine doesn't require Filesystem (Laravel 8)
+        $phpEngine = new PhpEngine();
+    }
+    
+    $bladeEngine = new CompilerEngine($compiler);
+    $factory = new Factory($events, $finder, $phpEngine, $bladeEngine);
+}
 
 // Set container instance
 Container::setInstance($container);
