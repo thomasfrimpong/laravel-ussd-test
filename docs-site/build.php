@@ -36,7 +36,7 @@ $compiler = new BladeCompiler($filesystem, __DIR__ . '/build_local/cache');
 $factory = new Factory(
     $events,
     $finder,
-    new PhpEngine(),
+    new PhpEngine($filesystem),
     new CompilerEngine($compiler)
 );
 
