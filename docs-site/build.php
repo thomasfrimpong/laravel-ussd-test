@@ -34,6 +34,11 @@ $finder->addNamespace('docs', __DIR__ . '/source/docs');
 // Create Blade compiler
 $compiler = new BladeCompiler($filesystem, __DIR__ . '/build_local/cache');
 
+// Check if PhpEngine needs Filesystem by inspecting its constructor
+$phpEngineReflection = new ReflectionClass(PhpEngine::class);
+$phpEngineParams = $phpEngineReflection->getConstructor()->getParameters();
+$phpEngineNeedsFilesystem = count($phpEngineParams) > 0;
+
 // Create view factory - try Laravel 11+ approach first, fall back to Laravel 8-10
 // Laravel 11+ uses EngineResolver, Laravel 8-10 uses individual engines
 $factory = null;
@@ -41,27 +46,29 @@ $factory = null;
 // Try Laravel 11+ approach (EngineResolver)
 if (class_exists('Illuminate\View\Engines\EngineResolver')) {
     try {
+        // Create PhpEngine instance first to ensure Filesystem is passed
+        $phpEngineInstance = new PhpEngine($filesystem);
+        $bladeEngineInstance = new CompilerEngine($compiler);
+        
         $resolver = new \Illuminate\View\Engines\EngineResolver();
-        $resolver->register('blade', function () use ($compiler) {
-            return new CompilerEngine($compiler);
+        $resolver->register('blade', function () use ($bladeEngineInstance) {
+            return $bladeEngineInstance;
         });
-        $resolver->register('php', function () use ($filesystem) {
-            return new PhpEngine($filesystem);
+        // In Laravel 11+, PhpEngine always requires Filesystem
+        $resolver->register('php', function () use ($phpEngineInstance) {
+            return $phpEngineInstance;
         });
         $factory = new Factory($resolver, $events, $finder);
     } catch (Throwable $e) {
         // If this fails, try Laravel 8-10 approach
+        echo "Laravel 11+ approach failed: " . $e->getMessage() . "\n";
         $factory = null;
     }
 }
 
 // Fall back to Laravel 8-10 approach (individual engines)
 if ($factory === null) {
-    // Check if PhpEngine needs Filesystem (Laravel 9+)
-    $phpEngineReflection = new ReflectionClass(PhpEngine::class);
-    $phpEngineParams = $phpEngineReflection->getConstructor()->getParameters();
-    
-    if (count($phpEngineParams) > 0) {
+    if ($phpEngineNeedsFilesystem) {
         // PhpEngine requires Filesystem (Laravel 9+)
         $phpEngine = new PhpEngine($filesystem);
     } else {
