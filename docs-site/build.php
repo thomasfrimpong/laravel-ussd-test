@@ -15,8 +15,6 @@ use Illuminate\View\FileViewFinder;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Compilers\BladeCompiler;
-use ReflectionClass;
-use Throwable;
 
 // Create container
 $container = new Container();
@@ -35,7 +33,7 @@ $finder->addNamespace('docs', __DIR__ . '/source/docs');
 $compiler = new BladeCompiler($filesystem, __DIR__ . '/build_local/cache');
 
 // Check if PhpEngine needs Filesystem by inspecting its constructor
-$phpEngineReflection = new ReflectionClass(PhpEngine::class);
+$phpEngineReflection = new \ReflectionClass(PhpEngine::class);
 $phpEngineParams = $phpEngineReflection->getConstructor()->getParameters();
 $phpEngineNeedsFilesystem = count($phpEngineParams) > 0;
 
@@ -58,8 +56,9 @@ if (class_exists('Illuminate\View\Engines\EngineResolver')) {
         $resolver->register('php', function () use ($phpEngineInstance) {
             return $phpEngineInstance;
         });
-        $factory = new Factory($resolver, $events, $finder);
-    } catch (Throwable $e) {
+        // Laravel 11+ Factory constructor: (EngineResolver, ViewFinderInterface, Dispatcher)
+        $factory = new Factory($resolver, $finder, $events);
+    } catch (\Throwable $e) {
         // If this fails, try Laravel 8-10 approach
         echo "Laravel 11+ approach failed: " . $e->getMessage() . "\n";
         $factory = null;
