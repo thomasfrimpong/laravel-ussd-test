@@ -5,7 +5,7 @@
 1. **Install dependencies:**
 
    ```bash
-   composer install
+   composer install 
    ```
 
 2. **Run tests:**
