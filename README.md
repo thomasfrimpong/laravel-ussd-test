@@ -27,7 +27,7 @@ Laravel 11 package for building state-driven USSD applications with session cont
    php artisan ussd:state WelcomeState
    ```
 
-See `docs/` for detailed usage, or visit the [online documentation](https://your-username.github.io/laravel-ussd-test/) (once deployed).
+See `docs/` for detailed usage, or visit the [online documentation](https://thomasfrimpong.github.io/laravel-ussd-test/) (once deployed).
 
 ## Development
 
