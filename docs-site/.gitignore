@@ -1,0 +1,5 @@
+node_modules/
+build_local/
+vendor/
+.DS_Store
+*.log
