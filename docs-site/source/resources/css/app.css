@@ -2,46 +2,122 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    /* Inline code in paragraphs - light background */
-    code {
-        @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
-    }
-    
-    /* Code blocks inside pre tags - white text, no background */
-    pre code {
-        @apply bg-transparent text-white p-0;
-        background: transparent !important;
-        color: white !important;
-    }
-    
-    /* Remove any syntax highlighting backgrounds and ensure white text */
-    pre code *,
-    pre code span,
-    pre code .token,
-    pre code .hljs {
-        background: transparent !important;
-        color: white !important;
-    }
-    
-    /* Ensure pre tags with dark backgrounds show white text */
-    .bg-gray-900 pre code,
-    .bg-gray-900 code {
-        color: white !important;
-        background: transparent !important;
-    }
+/* Inline code in paragraphs - light background (only for code NOT inside pre) */
+code:not(pre code) {
+    @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-900;
 }
 
-@layer components {
-    /* Inline code in prose - light background */
-    .prose code:not(pre code) {
-        @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
-    }
-    
-    /* Code blocks - ensure white text */
-    .prose pre code {
-        @apply bg-transparent text-white p-0;
-        background: transparent !important;
-    }
+.prose code:not(pre code) {
+    @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-900;
+}
+
+/* ============================================
+   CODE BLOCKS - WHITE TEXT, NO BACKGROUND
+   ============================================ */
+
+/* Target code blocks in dark containers - maximum specificity */
+.bg-gray-900 pre code,
+.bg-gray-900 code,
+div.bg-gray-900 pre code,
+div.bg-gray-900 code,
+pre.text-white code,
+pre code {
+    color: #ffffff !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* Remove ALL backgrounds from code block children */
+.bg-gray-900 pre code *,
+.bg-gray-900 pre code span,
+.bg-gray-900 pre code div,
+pre.text-white code *,
+pre.text-white code span,
+pre code *,
+pre code span {
+    color: #ffffff !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+/* Override any inline styles or classes */
+.bg-gray-900 pre code.bg-gray-100,
+.bg-gray-900 code.bg-gray-100,
+pre code.bg-gray-100 {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #ffffff !important;
+}
+
+/* Ensure pre tags themselves don't interfere */
+.bg-gray-900 pre,
+.bg-gray-900 pre.text-white {
+    color: #ffffff !important;
+}
+
+/* ============================================
+   SPACING AND LAYOUT IMPROVEMENTS
+   ============================================ */
+
+/* Better spacing for prose content */
+.prose {
+    @apply leading-relaxed;
+}
+
+.prose h1 {
+    @apply mb-6 mt-8;
+}
+
+.prose h2 {
+    @apply mb-4 mt-8 pt-4 border-t border-gray-200;
+}
+
+.prose h3 {
+    @apply mb-3 mt-6;
+}
+
+.prose p {
+    @apply mb-4;
+}
+
+.prose ul,
+.prose ol {
+    @apply mb-6 ml-6;
+}
+
+.prose li {
+    @apply mb-2;
+}
+
+/* Code blocks with better spacing */
+.prose .bg-gray-900 {
+    @apply my-6;
+}
+
+/* Group content in blocks */
+.prose > div:not(.bg-gray-900) {
+    @apply mb-6;
+}
+
+/* Add spacing between sections */
+.prose section {
+    @apply mb-8 pb-6;
+}
+
+/* Better spacing for grouped content */
+.prose .space-y-4 > * {
+    @apply mb-4;
+}
+
+.prose .space-y-6 > * {
+    @apply mb-6;
 }
 

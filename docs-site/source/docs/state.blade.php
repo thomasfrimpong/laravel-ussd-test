@@ -15,24 +15,27 @@
 <div class="prose prose-lg max-w-none">
     <h1>State</h1>
 
-    <p>States are the core building blocks of your USSD application. Each state represents a screen or step in your USSD flow.</p>
+    <p class="text-lg text-gray-600 mb-8">States are the core building blocks of your USSD application. Each state represents a screen or step in your USSD flow.</p>
 
-    <h2>Creating a State</h2>
+    <section class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h2 class="mt-0">Creating a State</h2>
 
-    <p>Use the Artisan command to create a new state:</p>
+        <p>Use the Artisan command to create a new state:</p>
 
-    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-        <pre class="text-white text-sm"><code>php artisan ussd:state WelcomeState</code></pre>
-    </div>
+        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto my-4">
+            <pre class="text-white text-sm"><code>php artisan ussd:state WelcomeState</code></pre>
+        </div>
 
-    <p>This will create a new state class in <code class="bg-gray-100 px-2 py-1 rounded">app/Ussd/States/WelcomeState.php</code>.</p>
+        <p class="mb-0">This will create a new state class in <code class="bg-gray-100 px-2 py-1 rounded">app/Ussd/States/WelcomeState.php</code>.</p>
+    </section>
 
-    <h2>State Structure</h2>
+    <section class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h2 class="mt-0">State Structure</h2>
 
-    <p>A typical state class looks like this:</p>
+        <p>A typical state class looks like this:</p>
 
-    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-        <pre class="text-white text-sm"><code>&lt;?php
+        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto my-4">
+            <pre class="text-white text-sm"><code>&lt;?php
 
 namespace App\Ussd\States;
 
@@ -68,21 +71,34 @@ class WelcomeState extends AbstractState
         };
     }
 }</code></pre>
-    </div>
+        </div>
+    </section>
 
-    <h2>State Methods</h2>
+    <section class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h2 class="mt-0">State Methods</h2>
 
-    <h3>menu()</h3>
-    <p>Returns a new Menu instance for building USSD menus.</p>
+        <div class="space-y-6">
+            <div>
+                <h3 class="mb-2">menu()</h3>
+                <p class="mb-0">Returns a new Menu instance for building USSD menus.</p>
+            </div>
 
-    <h3>next($method)</h3>
-    <p>Transitions to the next state or method within the same state.</p>
+            <div>
+                <h3 class="mb-2">next($method)</h3>
+                <p class="mb-0">Transitions to the next state or method within the same state.</p>
+            </div>
 
-    <h3>end($message)</h3>
-    <p>Ends the USSD session with a final message.</p>
+            <div>
+                <h3 class="mb-2">end($message)</h3>
+                <p class="mb-0">Ends the USSD session with a final message.</p>
+            </div>
 
-    <h3>context</h3>
-    <p>Access the current context which contains user input, session data, and request information.</p>
+            <div>
+                <h3 class="mb-2">context</h3>
+                <p class="mb-0">Access the current context which contains user input, session data, and request information.</p>
+            </div>
+        </div>
+    </section>
 </div>
 @endsection
 

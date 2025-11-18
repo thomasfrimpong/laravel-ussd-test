@@ -15,20 +15,20 @@
 <div class="prose prose-lg max-w-none">
     <h1>Action</h1>
 
-    <p>Actions encapsulate side-effect logic that can be invoked from states. They're useful for handling business logic, API calls, database operations, and other tasks that shouldn't be directly in your state classes.</p>
+    <p class="text-lg text-gray-600 mb-8">Actions encapsulate side-effect logic that can be invoked from states. They're useful for handling business logic, API calls, database operations, and other tasks that shouldn't be directly in your state classes.</p>
 
-    <h2>Creating an Action</h2>
+    <section class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h2 class="mt-0">Creating an Action</h2>
+        <p>Use the Artisan command to create a new action:</p>
+        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto my-4">
+            <pre class="text-white text-sm"><code>php artisan ussd:action ProcessPayment</code></pre>
+        </div>
+    </section>
 
-    <p>Use the Artisan command to create a new action:</p>
-
-    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-        <pre class="text-white text-sm"><code>php artisan ussd:action ProcessPayment</code></pre>
-    </div>
-
-    <h2>Action Structure</h2>
-
-    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-        <pre class="text-white text-sm"><code>&lt;?php
+    <section class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h2 class="mt-0">Action Structure</h2>
+        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto my-4">
+            <pre class="text-white text-sm"><code>&lt;?php
 
 namespace App\Ussd\Actions;
 
@@ -54,12 +54,13 @@ class ProcessPayment extends AbstractAction
         return $this->error('Payment failed. Please try again.');
     }
 }</code></pre>
-    </div>
+        </div>
+    </section>
 
-    <h2>Using Actions in States</h2>
-
-    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-        <pre class="text-white text-sm"><code>public function processPayment()
+    <section class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h2 class="mt-0">Using Actions in States</h2>
+        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto my-4">
+            <pre class="text-white text-sm"><code>public function processPayment()
 {
     $action = new ProcessPayment();
     $result = $action->execute($this->context);
@@ -72,7 +73,8 @@ class ProcessPayment extends AbstractAction
         ->text($result->getMessage())
         ->next('handle');
 }</code></pre>
-    </div>
+        </div>
+    </section>
 </div>
 @endsection
 
