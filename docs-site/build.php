@@ -107,8 +107,19 @@ $routes = [
     '/docs/testing' => 'testing',
 ];
 
-// Determine base path for GitHub Pages (empty for root, or /repo-name for subdirectory)
-$basePath = getenv('GITHUB_PAGES_BASE_PATH') ?: '';
+// Determine base path for GitHub Pages
+// GitHub Pages uses /repository-name as base path
+// Extract from GITHUB_REPOSITORY env var if available, or use default
+$githubRepo = getenv('GITHUB_REPOSITORY') ?: '';
+if ($githubRepo) {
+    // Extract repo name (e.g., "thomasfrimpong/laravel-ussd-test" -> "laravel-ussd-test")
+    $repoParts = explode('/', $githubRepo);
+    $repoName = end($repoParts);
+    $basePath = '/' . $repoName;
+} else {
+    // Default for this repository
+    $basePath = '/laravel-ussd-test';
+}
 
 foreach ($routes as $path => $view) {
     try {

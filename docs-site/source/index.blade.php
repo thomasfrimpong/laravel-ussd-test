@@ -13,13 +13,17 @@
         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3">Getting Started</h2>
             <p class="text-gray-600 mb-4">Learn how to install and configure Laravel USSD in your project.</p>
-            <a href="docs/installation" class="text-primary-600 hover:text-primary-700 font-medium">Get Started →</a>
+            @php
+                $base = $basePath ?? '';
+                $docsBase = rtrim($base, '/') . '/docs/';
+            @endphp
+            <a href="{{ $docsBase }}installation" class="text-primary-600 hover:text-primary-700 font-medium">Get Started →</a>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3">Core Concepts</h2>
             <p class="text-gray-600 mb-4">Understand states, menus, actions, and session management.</p>
-            <a href="docs/state" class="text-primary-600 hover:text-primary-700 font-medium">Learn More →</a>
+            <a href="{{ $docsBase }}state" class="text-primary-600 hover:text-primary-700 font-medium">Learn More →</a>
         </div>
     </div>
 
