@@ -107,11 +107,17 @@ $routes = [
     '/docs/testing' => 'testing',
 ];
 
+// Determine base path for GitHub Pages (empty for root, or /repo-name for subdirectory)
+$basePath = getenv('GITHUB_PAGES_BASE_PATH') ?: '';
+
 foreach ($routes as $path => $view) {
     try {
         // Use docs namespace for documentation pages, default for index
         $viewName = $path === '/' ? $view : "docs::{$view}";
-        $html = $factory->make($viewName, ['currentPath' => $path])->render();
+        $html = $factory->make($viewName, [
+            'currentPath' => $path,
+            'basePath' => $basePath
+        ])->render();
         
         $filePath = $buildDir . $path;
         if ($path === '/') {

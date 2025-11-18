@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Laravel USSD') - Laravel USSD Documentation</title>
     <meta name="description" content="@yield('description', 'Documentation for Laravel USSD package')">
-    <link rel="stylesheet" href="/assets/app.css">
-    <script src="/assets/app.js" defer></script>
+    @php
+        // Use relative paths for better GitHub Pages compatibility
+        // For root pages, assets are in /assets
+        // For /docs pages, assets are in ../assets
+        $isDocsPage = isset($currentPath) && strpos($currentPath, '/docs') === 0;
+        $assetBase = $isDocsPage ? '../' : '';
+    @endphp
+    <link rel="stylesheet" href="{{ $assetBase }}assets/app.css">
+    <script src="{{ $assetBase }}assets/app.js" defer></script>
 </head>
 <body class="bg-gray-50">
     <div class="min-h-screen flex flex-col">
@@ -15,7 +22,11 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
-                        <a href="/" class="text-2xl font-bold text-primary-600 {{ isset($currentPath) && $currentPath === '/' ? '' : '' }}">Laravel USSD</a>
+                        @php
+                            $isDocsPage = isset($currentPath) && strpos($currentPath, '/docs') === 0;
+                            $homeLink = $isDocsPage ? '../' : '';
+                        @endphp
+                        <a href="{{ $homeLink }}" class="text-2xl font-bold text-primary-600 {{ isset($currentPath) && $currentPath === '/' ? '' : '' }}">Laravel USSD</a>
                     </div>
                     <div class="flex items-center space-x-4">
                         <button id="search-toggle" class="p-2 text-gray-500 hover:text-gray-700">
@@ -34,15 +45,21 @@
                 <nav class="p-4">
                     <div class="space-y-1">
                         <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Getting Started</div>
-                        <a href="/docs/installation" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/installation' ? 'bg-gray-100 font-medium' : '' }}">Installation</a>
-                        <a href="/docs/requirements" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/requirements' ? 'bg-gray-100 font-medium' : '' }}">Requirements</a>
+                        @php
+                            // For docs pages, links are relative (same directory)
+                            // For root page, links are docs/...
+                            $isDocsPage = isset($currentPath) && strpos($currentPath, '/docs') === 0;
+                            $linkBase = $isDocsPage ? '' : 'docs/';
+                        @endphp
+                        <a href="{{ $linkBase }}installation" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/installation' ? 'bg-gray-100 font-medium' : '' }}">Installation</a>
+                        <a href="{{ $linkBase }}requirements" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/requirements' ? 'bg-gray-100 font-medium' : '' }}">Requirements</a>
                         
                         <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-4">Core Concepts</div>
-                        <a href="/docs/state" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/state' ? 'bg-gray-100 font-medium' : '' }}">State</a>
-                        <a href="/docs/menu" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/menu' ? 'bg-gray-100 font-medium' : '' }}">Menu</a>
-                        <a href="/docs/action" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/action' ? 'bg-gray-100 font-medium' : '' }}">Action</a>
-                        <a href="/docs/session-continuity" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/session-continuity' ? 'bg-gray-100 font-medium' : '' }}">Session Continuity</a>
-                        <a href="/docs/testing" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/testing' ? 'bg-gray-100 font-medium' : '' }}">Testing</a>
+                        <a href="{{ $linkBase }}state" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/state' ? 'bg-gray-100 font-medium' : '' }}">State</a>
+                        <a href="{{ $linkBase }}menu" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/menu' ? 'bg-gray-100 font-medium' : '' }}">Menu</a>
+                        <a href="{{ $linkBase }}action" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/action' ? 'bg-gray-100 font-medium' : '' }}">Action</a>
+                        <a href="{{ $linkBase }}session-continuity" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/session-continuity' ? 'bg-gray-100 font-medium' : '' }}">Session Continuity</a>
+                        <a href="{{ $linkBase }}testing" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/testing' ? 'bg-gray-100 font-medium' : '' }}">Testing</a>
                     </div>
                 </nav>
             </aside>
