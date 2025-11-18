@@ -63,7 +63,7 @@
 
     <section class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
         <h2 class="mt-0">Example</h2>
-        <div class="bg-black-900 rounded-lg p-4 overflow-x-auto my-4">
+        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto my-4">
             <pre class="text-white text-sm"><code>return $this->menu()
     ->text('Select an option:')
     ->options([
