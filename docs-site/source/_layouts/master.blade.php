@@ -6,22 +6,28 @@
     <title>@yield('title', 'Laravel USSD') - Laravel USSD Documentation</title>
     <meta name="description" content="@yield('description', 'Documentation for Laravel USSD package')">
     @php
-        // Use base path for GitHub Pages
+        // Use base path for GitHub Pages - define once at the top
         $base = $basePath ?? '/laravel-ussd-test';
         $base = rtrim($base, '/');
     @endphp
     <base href="{{ $base }}/">
     <link rel="stylesheet" href="assets/app.css">
     <script src="assets/app.js" defer></script>
+    @stack('styles')
 </head>
 <body class="bg-gray-50">
+    @php
+        // Make base available throughout the template
+        $base = $basePath ?? '/laravel-ussd-test';
+        $base = rtrim($base, '/');
+    @endphp
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
         <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
-                        <a href="/" class="text-2xl font-bold text-primary-600 {{ isset($currentPath) && $currentPath === '/' ? '' : '' }}">Laravel USSD</a>
+                        <a href="{{ $base }}/" class="text-2xl font-bold text-primary-600 {{ isset($currentPath) && $currentPath === '/' ? '' : '' }}">Laravel USSD</a>
                     </div>
                     <div class="flex items-center space-x-4">
                         <button id="search-toggle" class="p-2 text-gray-500 hover:text-gray-700">
@@ -40,15 +46,15 @@
                 <nav class="p-4">
                     <div class="space-y-1">
                         <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Getting Started</div>
-                        <a href="docs/installation" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/installation' ? 'bg-gray-100 font-medium' : '' }}">Installation</a>
-                        <a href="docs/requirements" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/requirements' ? 'bg-gray-100 font-medium' : '' }}">Requirements</a>
+                        <a href="{{ $base }}/docs/installation" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/installation' ? 'bg-gray-100 font-medium' : '' }}">Installation</a>
+                        <a href="{{ $base }}/docs/requirements" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/requirements' ? 'bg-gray-100 font-medium' : '' }}">Requirements</a>
                         
                         <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-4">Core Concepts</div>
-                        <a href="docs/state" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/state' ? 'bg-gray-100 font-medium' : '' }}">State</a>
-                        <a href="docs/menu" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/menu' ? 'bg-gray-100 font-medium' : '' }}">Menu</a>
-                        <a href="docs/action" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/action' ? 'bg-gray-100 font-medium' : '' }}">Action</a>
-                        <a href="docs/session-continuity" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/session-continuity' ? 'bg-gray-100 font-medium' : '' }}">Session Continuity</a>
-                        <a href="docs/testing" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/testing' ? 'bg-gray-100 font-medium' : '' }}">Testing</a>
+                        <a href="{{ $base }}/docs/state" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/state' ? 'bg-gray-100 font-medium' : '' }}">State</a>
+                        <a href="{{ $base }}/docs/menu" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/menu' ? 'bg-gray-100 font-medium' : '' }}">Menu</a>
+                        <a href="{{ $base }}/docs/action" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/action' ? 'bg-gray-100 font-medium' : '' }}">Action</a>
+                        <a href="{{ $base }}/docs/session-continuity" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/session-continuity' ? 'bg-gray-100 font-medium' : '' }}">Session Continuity</a>
+                        <a href="{{ $base }}/docs/testing" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded {{ isset($currentPath) && $currentPath === '/docs/testing' ? 'bg-gray-100 font-medium' : '' }}">Testing</a>
                     </div>
                 </nav>
             </aside>

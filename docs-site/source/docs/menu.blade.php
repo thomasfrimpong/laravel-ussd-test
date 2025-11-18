@@ -2,6 +2,15 @@
 
 @section('title', 'Menu')
 
+@push('styles')
+@php
+    $base = $basePath ?? '/laravel-ussd-test';
+    $base = rtrim($base, '/');
+@endphp
+<link rel="stylesheet" href="{{ $base }}/assets/app.css">
+<script src="{{ $base }}/assets/app.js" defer></script>
+@endpush
+
 @section('body')
 <div class="prose prose-lg max-w-none">
     <h1>Menu</h1>
