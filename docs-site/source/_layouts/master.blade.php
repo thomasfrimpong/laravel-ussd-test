@@ -10,8 +10,10 @@
         $base = $basePath ?? '/laravel-ussd-test';
         $base = rtrim($base, '/');
     @endphp
-    <link rel="stylesheet" href="{{ $base }}/assets/app.css">
-    <script src="{{ $base }}/assets/app.js" defer></script>
+    <base href="{{ $base }}/">
+    <link rel="stylesheet" href="assets/app.css">
+    <script src="assets/app.js" defer></script>
+    @stack('styles')
 </head>
 <body class="bg-gray-50">
     @php
