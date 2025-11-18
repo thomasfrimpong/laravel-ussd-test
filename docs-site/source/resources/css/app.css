@@ -3,14 +3,45 @@
 @tailwind utilities;
 
 @layer base {
+    /* Inline code in paragraphs - light background */
     code {
         @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
+    }
+    
+    /* Code blocks inside pre tags - white text, no background */
+    pre code {
+        @apply bg-transparent text-white p-0;
+        background: transparent !important;
+        color: white !important;
+    }
+    
+    /* Remove any syntax highlighting backgrounds and ensure white text */
+    pre code *,
+    pre code span,
+    pre code .token,
+    pre code .hljs {
+        background: transparent !important;
+        color: white !important;
+    }
+    
+    /* Ensure pre tags with dark backgrounds show white text */
+    .bg-gray-900 pre code,
+    .bg-gray-900 code {
+        color: white !important;
+        background: transparent !important;
     }
 }
 
 @layer components {
-    .prose code {
+    /* Inline code in prose - light background */
+    .prose code:not(pre code) {
         @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
+    }
+    
+    /* Code blocks - ensure white text */
+    .prose pre code {
+        @apply bg-transparent text-white p-0;
+        background: transparent !important;
     }
 }
 
