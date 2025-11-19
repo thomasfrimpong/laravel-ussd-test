@@ -6,7 +6,7 @@
 <div class="prose prose-lg max-w-none">
     <div class="mb-8">
         <h1 class="text-5xl font-extrabold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent mb-4">
-            Installation
+            Installations
         </h1>
     </div>
 
@@ -40,7 +40,9 @@
         </h2>
         <p class="text-slate-700 mb-4">This is the default content of the config file:</p>
         <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
-            <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">return [
+            <pre class="text-slate-100 text-sm font-mono leading-relaxed">
+                <code class="text-slate-100">
+                    return [
     'initial_state' => 'App\\Ussd\\States\\WelcomeState',
 
     'state_namespace' => 'App\\Ussd\\States',
@@ -64,7 +66,9 @@
         'restart_option_key' => '2',
         'restart_option_text' => 'Start over',
     ],
-];</code></pre>
+];
+</code>
+</pre>
         </div>
     </section>
 
