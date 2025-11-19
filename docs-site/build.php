@@ -103,8 +103,12 @@ $routes = [
     '/docs/state' => 'state',
     '/docs/menu' => 'menu',
     '/docs/action' => 'action',
+    '/docs/decision' => 'decision',
+    '/docs/record' => 'record',
+    '/docs/machine' => 'machine',
     '/docs/session-continuity' => 'session-continuity',
     '/docs/testing' => 'testing',
+    '/docs/example' => 'example',
 ];
 
 // Determine base path for GitHub Pages
