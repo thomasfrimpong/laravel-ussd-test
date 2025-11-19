@@ -28,6 +28,11 @@
             }
         }
     </script>
+    @php
+        $base = $basePath ?? '/laravel-ussd-test';
+        $base = rtrim($base, '/');
+    @endphp
+    <link rel="stylesheet" href="{{ $base }}/assets/app.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -39,17 +44,9 @@
         .prose pre { background: #1e293b; }
         .prose pre code { background: transparent; padding: 0; }
     </style>
-    @php
-        $base = $basePath ?? '/laravel-ussd-test';
-        $base = rtrim($base, '/');
-    @endphp
     <base href="{{ $base }}/">
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 antialiased">
-    @php
-        $base = $basePath ?? '/laravel-ussd-test';
-        $base = rtrim($base, '/');
-    @endphp
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
         <header class="bg-white/80 backdrop-blur-lg border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
@@ -210,5 +207,6 @@
             }
         });
     </script>
+    <script src="{{ $base }}/assets/app.js"></script>
 </body>
 </html>
