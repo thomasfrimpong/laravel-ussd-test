@@ -101,6 +101,7 @@ $routes = [
     '/docs/installation' => 'installation',
     '/docs/requirements' => 'requirements',
     '/docs/state' => 'state',
+    '/docs/nested-states' => 'nested-states',
     '/docs/menu' => 'menu',
     '/docs/action' => 'action',
     '/docs/decision' => 'decision',

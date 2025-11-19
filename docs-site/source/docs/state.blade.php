@@ -110,5 +110,204 @@ class WelcomeState extends AbstractState
             </div>
         </div>
     </section>
+
+    <section class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-8 mb-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300">
+        <h2 class="text-3xl font-bold text-slate-900 mb-4 mt-0 flex items-center">
+            <span class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full mr-4"></span>
+            Response Types: CON vs END
+        </h2>
+        <p class="text-slate-700 mb-4">USSD responses must be prefixed with either <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">CON</code> (continue) or <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">END</code> (end session). The framework automatically determines this based on whether your menu expects user input.</p>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-slate-900 mb-3">CON (Continue) - Expects User Input</h3>
+            <p class="text-slate-700 mb-4">Use <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">CON</code> when you want the user to provide input. This keeps the session active and waits for the user's response.</p>
+            
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-6 border border-blue-200/50 mb-4">
+                <h4 class="text-lg font-bold text-slate-900 mb-2">When to Use CON:</h4>
+                <ul class="space-y-2 text-slate-700 mb-0">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Displaying menus with options for the user to select
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Asking for user input (phone numbers, amounts, PINs, etc.)
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Any state where the user needs to make a selection or provide data
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">&lt;?php
+
+class WelcomeState extends AbstractState
+{
+    protected function buildMenu(Context $context): Menu
+    {
+        return (new Menu())
+            ->text('Welcome to our service!')
+            ->option('1', 'View Balance')
+            ->option('2', 'Transfer Money')
+            ->option('3', 'Exit')
+            ->expectsInput(true); // CON response - expects input
+    }
+}</code></pre>
+            </div>
+            <p class="text-slate-600 mb-0">The response will be: <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">CON Welcome to our service!\n1. View Balance\n2. Transfer Money\n3. Exit</code></p>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-slate-900 mb-3">END (End Session) - Information Only</h3>
+            <p class="text-slate-700 mb-4">Use <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">END</code> when you're displaying information only and don't need user input. This terminates the USSD session.</p>
+            
+            <div class="bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-6 border border-green-200/50 mb-4">
+                <h4 class="text-lg font-bold text-slate-900 mb-2">When to Use END:</h4>
+                <ul class="space-y-2 text-slate-700 mb-0">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Displaying account balance or transaction results
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Showing confirmation messages (e.g., "Transfer successful")
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Error messages that don't require user action
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Final states in a flow (success/error screens)
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">&lt;?php
+
+class BalanceState extends AbstractState
+{
+    protected function buildMenu(Context $context): Menu
+    {
+        $this->setContext($context);
+        $balance = $this->record->get('balance', '0.00');
+        
+        return (new Menu())
+            ->text('Account Balance')
+            ->line('')
+            ->text("Your balance: {$balance}")
+            ->line('')
+            ->text('Thank you for using our service.')
+            ->expectsInput(false); // END response - no input needed
+    }
+}</code></pre>
+            </div>
+            <p class="text-slate-600 mb-0">The response will be: <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">END Account Balance\n\nYour balance: 1000.00\n\nThank you for using our service.</code></p>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Using the response() Method</h3>
+            <p class="text-slate-700 mb-4">The <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">response()</code> method automatically determines CON or END based on the menu's <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">expectsInput()</code> setting:</p>
+            
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">&lt;?php
+
+class MyState extends AbstractState
+{
+    protected function buildMenu(Context $context): Menu
+    {
+        $menu = (new Menu())
+            ->text('Select an option:')
+            ->option('1', 'Option 1')
+            ->option('2', 'Option 2');
+        
+        // Option 1: Set expectsInput on the menu
+        $menu->expectsInput(true); // Will generate CON response
+        
+        // Option 2: Pass expectsInput to response() method
+        // This overrides the menu's setting
+        return $this->response($menu, true); // CON response
+        // or
+        return $this->response($menu, false); // END response
+    }
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Direct Response Creation</h3>
+            <p class="text-slate-700 mb-4">You can also create responses directly using <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">UssdResponse</code> class for more control:</p>
+            
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">&lt;?php
+
+use Vendor\LaravelUssd\Support\UssdResponse;
+
+class CustomState extends AbstractState
+{
+    public function entry(Context $context): UssdResponse
+    {
+        // Create a CON response (expects input)
+        return UssdResponse::continue('Please enter your PIN:');
+        
+        // Or create an END response (info only)
+        return UssdResponse::end('Transaction completed successfully!');
+    }
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-6 border border-amber-200/50">
+            <h4 class="text-lg font-bold text-slate-900 mb-2 flex items-center">
+                <svg class="w-5 h-5 text-amber-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                Important Notes
+            </h4>
+            <ul class="space-y-2 text-slate-700 mb-0">
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    <strong>CON responses</strong> keep the session alive. The user can continue interacting with your application.
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    <strong>END responses</strong> terminate the session immediately. The user must start a new session to continue.
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    If you use <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">expectsInput(false)</code>, make sure your <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">next()</code> method returns <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">null</code> since the session will end.
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    The default behavior is <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">expectsInput(true)</code>, so menus will generate CON responses unless explicitly set to false.
+                </li>
+            </ul>
+        </div>
+    </section>
 </div>
 @endsection
