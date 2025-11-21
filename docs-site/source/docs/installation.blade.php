@@ -6,7 +6,7 @@
 <div class="prose prose-lg max-w-none">
     <div class="mb-8">
         <h1 class="text-5xl font-extrabold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent mb-4">
-            Installations
+            Installation
         </h1>
     </div>
 
