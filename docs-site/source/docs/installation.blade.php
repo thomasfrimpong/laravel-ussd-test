@@ -108,6 +108,22 @@
             <pre class="text-slate-100 text-sm font-mono"><code class="text-slate-100">php artisan ussd:state WelcomeState</code></pre>
         </div>
     </section>
+
+    <section class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-8 mb-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300">
+        <h2 class="text-3xl font-bold text-slate-900 mb-4 mt-0 flex items-center">
+            <span class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full mr-4"></span>
+            Set the Initial State
+        </h2>
+        <p class="text-slate-700 mb-4">The initial state is the first state that users see when they dial your USSD code. Configure it in <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">config/ussd.php</code>:</p>
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+            <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">return [
+    'initial_state' => 'App\\Ussd\\States\\WelcomeState',
+    
+    // ... other configuration
+];</code></pre>
+        </div>
+        <p class="text-slate-700 mb-0">Make sure the class name matches the state you created. The initial state must be a fully qualified class name (including namespace). This is the entry point for all new USSD sessions.</p>
+    </section>
 </div>
 @endsection
 
