@@ -53,11 +53,13 @@ class WelcomeState extends AbstractState
 
     public function next(Context $context, string $input): ?string
     {
+        // IMPORTANT: Must return a State class name (string) or null
+        // Never return an Action class name
         return $this->decision($input)
-            ->equal('1', BalanceState::class)
-            ->equal('2', TransferState::class)
+            ->equal('1', BalanceState::class)  // ✅ State class name
+            ->equal('2', TransferState::class) // ✅ State class name
             ->equal('3', null) // End session
-            ->any(WelcomeState::class); // Default fallback
+            ->any(WelcomeState::class); // ✅ State class name (default fallback)
     }
 }</code></pre>
         </div>
@@ -86,7 +88,7 @@ class WelcomeState extends AbstractState
                     </svg>
                     next()
                 </h3>
-                <p class="text-slate-700 mb-0">Processes user input and returns the next state class name, or null to end the session.</p>
+                <p class="text-slate-700 mb-0"><strong>Must return a State class name (string) or null.</strong> Processes user input and returns the fully qualified class name of the next <strong>State</strong> to navigate to, or <code class="bg-primary-100 px-1.5 py-0.5 rounded text-primary-900 font-mono text-xs">null</code> to end the session. Never return an Action class name.</p>
             </div>
 
             <div class="bg-gradient-to-br from-primary-50 to-primary-100/50 rounded-xl p-6 border border-primary-200/50">
@@ -441,6 +443,120 @@ class CustomState extends AbstractState
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                     The default behavior is <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">expectsInput(true)</code>, so menus will generate CON responses unless explicitly set to false.
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-8 mb-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300">
+        <h2 class="text-3xl font-bold text-slate-900 mb-4 mt-0 flex items-center">
+            <span class="w-1 h-8 bg-gradient-to-b from-amber-500 to-amber-600 rounded-full mr-4"></span>
+            Common Mistakes
+        </h2>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-red-900 mb-3">❌ Mistake 1: Returning Action Instead of State</h3>
+            <p class="text-slate-700 mb-3">The most common error is returning an Action class name from <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">next()</code> instead of a State class name.</p>
+            
+            <div class="bg-gradient-to-br from-red-900 to-red-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-red-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">public function next(Context $context, string $input): ?string
+{
+    // ❌ WRONG: Returning an Action class name
+    return ProcessPaymentAction::class; // Error: Must return State, not Action
+}</code></pre>
+            </div>
+            
+            <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-green-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">public function next(Context $context, string $input): ?string
+{
+    $this->setContext($context);
+    
+    // ✅ CORRECT: Call the action, then return a State
+    $action = new ProcessPaymentAction();
+    $result = $action->handle($context, $input);
+    
+    return $result['success'] 
+        ? PaymentSuccessState::class  // Return State class name
+        : PaymentErrorState::class;   // Return State class name
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-red-900 mb-3">❌ Mistake 2: Returning Action Instance</h3>
+            <p class="text-slate-700 mb-3">Never return an Action instance from <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">next()</code>.</p>
+            
+            <div class="bg-gradient-to-br from-red-900 to-red-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-red-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">public function next(Context $context, string $input): ?string
+{
+    // ❌ WRONG: Returning an Action instance
+    return new ProcessPaymentAction(); // Error: Must return string (State class name)
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-red-900 mb-3">❌ Mistake 3: Forgetting to Return State Class Name</h3>
+            <p class="text-slate-700 mb-3">Always return a fully qualified State class name as a string, or use the <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">::class</code> constant.</p>
+            
+            <div class="bg-gradient-to-br from-red-900 to-red-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-red-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">public function next(Context $context, string $input): ?string
+{
+    // ❌ WRONG: Returning the class without ::class or as object
+    return 'NextState'; // Missing namespace
+    return new NextState(); // Returning instance, not class name
+}</code></pre>
+            </div>
+            
+            <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-green-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">public function next(Context $context, string $input): ?string
+{
+    // ✅ CORRECT: Return State class name using ::class
+    return NextState::class;
+    
+    // ✅ CORRECT: Or return fully qualified string
+    return 'App\\Ussd\\States\\NextState';
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-6 border border-amber-200/50">
+            <h4 class="text-lg font-bold text-slate-900 mb-2 flex items-center">
+                <svg class="w-5 h-5 text-amber-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Remember: next() Return Type
+            </h4>
+            <ul class="space-y-2 text-slate-700 mb-0">
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    Return type is <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">?string</code> - a State class name or null
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    Always return a <strong>State</strong> class name, never an Action class name
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    Use <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">StateClass::class</code> or fully qualified string like <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">'App\\Ussd\\States\\StateClass'</code>
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    Return <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">null</code> to end the USSD session
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    If you need to call an Action for business logic, call it first, then return the appropriate State based on the result
                 </li>
             </ul>
         </div>

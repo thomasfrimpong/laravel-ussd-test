@@ -18,10 +18,12 @@ class WelcomeState extends AbstractState
 
     public function next(Context $context, string $input): ?string
     {
+        // IMPORTANT: Must return a State class name (string) or null
+        // Never return an Action class name - actions are called, not returned
         return match ($input) {
-            '1' => 'App\\Ussd\\States\\BalanceState',
-            '2' => 'App\\Ussd\\States\\TransferState',
-            default => null,
+            '1' => 'App\\Ussd\\States\\BalanceState',  // ✅ State class name
+            '2' => 'App\\Ussd\\States\\TransferState',  // ✅ State class name
+            default => null,  // End session
         };
     }
 }

@@ -334,14 +334,39 @@ class ConfirmTransferState extends AbstractState
     {
         $this->setContext($context);
         
-        return $this->decision($input)
-            ->equal('1', TransferSuccessState::class) // Confirm - process transfer
-            ->equal('2', WelcomeState::class) // Cancel - return to main menu
-            ->any(ConfirmTransferState::class); // Invalid input - show again
+        // Handle confirmation
+        if ($input === '1') {
+            // Call an action to process the transfer
+            // Actions are called (invoked) to perform business logic
+            $action = new \App\Ussd\Actions\ProcessTransferAction();
+            $result = $action->handle($context, $input);
+            
+            // IMPORTANT: Return a STATE class name based on action result
+            // Never return the Action class name (e.g., ProcessTransferAction::class)
+            return $result['success'] ?? false
+                ? TransferSuccessState::class  // ✅ State class name
+                : TransferErrorState::class;   // ✅ State class name
+        }
         
-        // Note: In a real app, you'd process the transfer in an Action
-        // before transitioning to TransferSuccessState
+        // Handle cancellation
+        if ($input === '2') {
+            return WelcomeState::class; // ✅ State class name
+        }
+        
+        // Invalid input - show again
+        return ConfirmTransferState::class; // ✅ State class name
     }
+    
+    // Alternative using decision() helper (when you don't need to call actions):
+    // public function next(Context $context, string $input): ?string
+    // {
+    //     $this->setContext($context);
+    //     
+    //     return $this->decision($input)
+    //         ->equal('1', TransferSuccessState::class)
+    //         ->equal('2', WelcomeState::class)
+    //         ->any(ConfirmTransferState::class);
+    // }
 }</code></pre>
             </div>
         </div>
@@ -388,7 +413,104 @@ class TransferSuccessState extends AbstractState
     <section class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-8 mb-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300">
         <h2 class="text-3xl font-bold text-slate-900 mb-4 mt-0 flex items-center">
             <span class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full mr-4"></span>
-            Step 8: Create CheckBalanceState
+            Step 8: Using Actions for Business Logic
+        </h2>
+        <p class="text-slate-700 mb-4">To process the transfer, create an Action to handle the business logic. Actions are <strong>called</strong> from states, not returned as navigation targets.</p>
+        
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Create the ProcessTransferAction</h3>
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">php artisan ussd:action ProcessTransferAction</code></pre>
+            </div>
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">&lt;?php
+
+namespace App\Ussd\Actions;
+
+use Vendor\LaravelUssd\Support\AbstractAction;
+use Vendor\LaravelUssd\Support\Context;
+
+class ProcessTransferAction extends AbstractAction
+{
+    public function handle(Context $context, string $input): mixed
+    {
+        // Get transfer details from session
+        $record = new \Vendor\LaravelUssd\Support\Record($context);
+        $recipient = $record->get('recipient');
+        $amount = $record->get('amount');
+        
+        // Perform the transfer (API call, database update, etc.)
+        // $result = $this->transferService->process($recipient, $amount);
+        
+        // Return result that the state can use to determine next step
+        return [
+            'success' => true,
+            'transaction_id' => 'TXN123',
+            'message' => 'Transfer processed successfully'
+        ];
+    }
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Update ConfirmTransferState to Use the Action</h3>
+            <p class="text-slate-700 mb-3">Now update the <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">ConfirmTransferState::next()</code> method to call the action and return the appropriate State:</p>
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
+                <pre class="text-slate-100 text-sm font-mono leading-relaxed"><code class="text-slate-100">public function next(Context $context, string $input): ?string
+{
+    $this->setContext($context);
+    
+    if ($input === '1') {
+        // ✅ CORRECT: Call the action to perform business logic
+        $action = new \App\Ussd\Actions\ProcessTransferAction();
+        $result = $action->handle($context, $input);
+        
+        // ✅ CORRECT: Return a STATE class name based on the result
+        // Never return ProcessTransferAction::class (that would be wrong!)
+        return ($result['success'] ?? false)
+            ? TransferSuccessState::class  // State class name
+            : TransferErrorState::class;   // State class name
+    }
+    
+    if ($input === '2') {
+        return WelcomeState::class; // Cancel - return to main menu
+    }
+    
+    return ConfirmTransferState::class; // Invalid input - show again
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl p-6 border border-red-200/50">
+            <h4 class="text-lg font-bold text-slate-900 mb-2 flex items-center">
+                <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                Critical: Never Return Action Class Names
+            </h4>
+            <p class="text-slate-700 mb-2">The <code class="bg-red-100 px-1.5 py-0.5 rounded text-red-900 font-mono text-xs">next()</code> method must return a <strong>State</strong> class name, never an Action class name. Common mistakes:</p>
+            <ul class="space-y-1 text-slate-700 mb-0 text-sm">
+                <li class="flex items-start">
+                    <span class="text-red-600 mr-2">❌</span>
+                    <code class="bg-red-100 px-1.5 py-0.5 rounded text-red-900 font-mono text-xs">return ProcessTransferAction::class;</code> - Wrong! Returns Action, not State
+                </li>
+                <li class="flex items-start">
+                    <span class="text-red-600 mr-2">❌</span>
+                    <code class="bg-red-100 px-1.5 py-0.5 rounded text-red-900 font-mono text-xs">return new ProcessTransferAction();</code> - Wrong! Returns instance, not class name
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-600 mr-2">✅</span>
+                    <code class="bg-green-100 px-1.5 py-0.5 rounded text-green-900 font-mono text-xs">$action->handle(); return TransferSuccessState::class;</code> - Correct! Call action, return State
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-8 mb-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300">
+        <h2 class="text-3xl font-bold text-slate-900 mb-4 mt-0 flex items-center">
+            <span class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full mr-4"></span>
+            Step 9: Create CheckBalanceState
         </h2>
         <p class="text-slate-700 mb-4">Create a simple balance check state:</p>
         <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
@@ -428,7 +550,7 @@ class CheckBalanceState extends AbstractState
     <section class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-8 mb-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300">
         <h2 class="text-3xl font-bold text-slate-900 mb-4 mt-0 flex items-center">
             <span class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full mr-4"></span>
-            Step 9: Update Configuration
+            Step 10: Update Configuration
         </h2>
         <p class="text-slate-700 mb-4">Set the initial state in <code class="bg-slate-100 px-2 py-1 rounded-md text-slate-800 font-mono text-sm border border-slate-200">config/ussd.php</code>:</p>
         <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">
@@ -443,7 +565,7 @@ class CheckBalanceState extends AbstractState
     <section class="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-8 mb-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300">
         <h2 class="text-3xl font-bold text-slate-900 mb-4 mt-0 flex items-center">
             <span class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full mr-4"></span>
-            Step 10: Testing the Flow
+            Step 11: Testing the Flow
         </h2>
         <p class="text-slate-700 mb-4">Test your USSD application by sending POST requests to your endpoint:</p>
         <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 overflow-x-auto my-4 shadow-xl border border-slate-700/50">

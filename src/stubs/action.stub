@@ -7,9 +7,23 @@ use Vendor\LaravelUssd\Support\Context;
 
 class DummyAction extends AbstractAction
 {
+    /**
+     * Execute the action with the given context and input.
+     * 
+     * IMPORTANT: Actions are CALLED from within State's next() method,
+     * not returned as navigation targets. The State's next() method
+     * should call this action, then return a State class name based
+     * on the result.
+     * 
+     * Example usage in State:
+     *   $action = new DummyAction();
+     *   $result = $action->handle($context, $input);
+     *   return $result['success'] ? SuccessState::class : ErrorState::class;
+     */
     public function handle(Context $context, string $input): mixed
     {
         // Perform action and return outcome
+        // This result will be used by the calling State to determine next state
 
         return null;
     }
