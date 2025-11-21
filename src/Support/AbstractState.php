@@ -23,11 +23,12 @@ abstract class AbstractState implements State
     protected ?Context $context = null;
 
     /**
-     * Record instance for storing and retrieving session data.
+     * Internal storage for Record instance.
+     * Made private to ensure __get is always triggered when accessing $this->record.
      *
      * @var Record|null
      */
-    protected ?Record $record = null;
+    private ?Record $recordInstance = null;
 
     /**
      * Build the menu for this state.
@@ -84,7 +85,7 @@ abstract class AbstractState implements State
     protected function setContext(Context $context): void
     {
         $this->context = $context;
-        $this->record = new Record($context);
+        $this->recordInstance = new Record($context);
     }
 
     /**
@@ -111,14 +112,19 @@ abstract class AbstractState implements State
      * $value = $this->record->get('key');
      *
      * @return Record Record instance
+     * @throws \RuntimeException If context is not set
      */
     protected function record(): Record
     {
-        if ($this->record === null && $this->context !== null) {
-            $this->record = new Record($this->context);
+        if ($this->context === null) {
+            throw new \RuntimeException('Context must be set before accessing record. Call $this->setContext($context) in your next() or buildMenu() method.');
         }
 
-        return $this->record;
+        if ($this->recordInstance === null) {
+            $this->recordInstance = new Record($this->context);
+        }
+
+        return $this->recordInstance;
     }
 
     /**
@@ -136,12 +142,24 @@ abstract class AbstractState implements State
     public function __get(string $name)
     {
         if ($name === 'record') {
-            if ($this->context === null) {
-                throw new \RuntimeException('Context must be set before accessing record. Call setContext($context) in your next() method.');
-            }
             return $this->record();
         }
 
         return null;
+    }
+
+    /**
+     * Magic method to check if record property is set.
+     *
+     * @param string $name Property name
+     * @return bool True if property exists and is accessible
+     */
+    public function __isset(string $name): bool
+    {
+        if ($name === 'record') {
+            return $this->context !== null;
+        }
+
+        return false;
     }
 }
