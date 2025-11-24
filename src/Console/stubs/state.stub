@@ -18,14 +18,6 @@ class DummyClass extends AbstractState
 
     public function next(Context $context, string $input): ?string
     {
-        // IMPORTANT: Must return a State class name (string) or null
-        // Never return an Action class name - actions are called, not returned
-        // Examples:
-        //   return NextState::class;  // ✅ Correct: State class name
-        //   return 'App\\Ussd\\States\\NextState';  // ✅ Correct: State class name
-        //   return null;  // ✅ Correct: End session
-        //   return ProcessAction::class;  // ❌ Wrong: Action class name
-        
         if ($input === '1') {
             return 'App\\Ussd\\States\\NextState';
         }
