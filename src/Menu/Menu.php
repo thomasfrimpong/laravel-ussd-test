@@ -22,6 +22,11 @@ class Menu
     protected bool $expectsInput = false;
 
     /**
+     * @var bool Whether expectsInput was explicitly set
+     */
+    protected bool $expectsInputExplicitlySet = false;
+
+    /**
      * Add a text line to the menu.
      *
      * @param string $text Text content to add
@@ -121,6 +126,7 @@ class Menu
     public function expectsInput(bool $expectsInput = true): self
     {
         $this->expectsInput = $expectsInput;
+        $this->expectsInputExplicitlySet = true;
 
         return $this;
     }
@@ -152,5 +158,15 @@ class Menu
     public function needsInput(): bool
     {
         return $this->expectsInput;
+    }
+
+    /**
+     * Check if expectsInput was explicitly set on this menu.
+     *
+     * @return bool True if expectsInput was explicitly set
+     */
+    public function hasExplicitInputExpectation(): bool
+    {
+        return $this->expectsInputExplicitlySet;
     }
 }

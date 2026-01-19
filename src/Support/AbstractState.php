@@ -47,12 +47,24 @@ abstract class AbstractState implements State
      * whether the menu expects input.
      *
      * @param Menu $menu Menu instance to convert
-     * @param bool $expectsInput Whether the menu expects user input
+     * @param bool|null $expectsInput Whether the menu expects user input. If null, uses the menu's current setting.
      * @return UssdResponse Formatted response
      */
-    protected function response(Menu $menu, bool $expectsInput = true): UssdResponse
+    protected function response(Menu $menu, ?bool $expectsInput = null): UssdResponse
     {
-        $menu->expectsInput($expectsInput);
+        // Only override if explicitly provided, otherwise respect menu's current setting
+        if ($expectsInput !== null) {
+            $menu->expectsInput($expectsInput);
+        } elseif (!$menu->hasExplicitInputExpectation()) {
+            // If not explicitly set on menu or in response() call, check if menu has options
+            // and default to expecting input for backward compatibility
+            // We detect options by checking if the rendered menu contains numbered options (pattern: "X. ")
+            $rendered = $menu->render();
+            // Check if menu contains numbered options (e.g., "1. Option", "2. Another")
+            if (preg_match('/^\d+\.\s+/m', $rendered)) {
+                $menu->expectsInput(true);
+            }
+        }
 
         // Append configured suffix if provided
         $suffix = config('ussd.default_response_suffix', '');
