@@ -8,7 +8,7 @@ namespace Vendor\LaravelUssd\Support;
  * Represents a formatted USSD response that will be sent to the gateway.
  * USSD responses must be prefixed with either "CON" (continue) or "END" (end session).
  */
-class UssdResponse
+class UssdResponse implements \JsonSerializable
 {
     /**
      * Create a new USSD response.
@@ -83,5 +83,17 @@ class UssdResponse
     public function toJson(): string
     {
         return json_encode($this->toArray());
+    }
+
+    /**
+     * Specify data which should be serialized to JSON.
+     *
+     * This ensures Laravel's JSON serialization uses our custom format.
+     *
+     * @return array Data which can be serialized by json_encode()
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }
