@@ -19,8 +19,7 @@ class UssdResponse
     public function __construct(
         public readonly string $type,
         public readonly string $message,
-    ) {
-    }
+    ) {}
 
     /**
      * Create a CONTINUE response.
@@ -58,5 +57,31 @@ class UssdResponse
     public function __toString(): string
     {
         return $this->type . ' ' . $this->message;
+    }
+
+    /**
+     * Convert response to array format for JSON responses.
+     *
+     * Returns array with ussdServiceOp and message fields.
+     * ussdServiceOp is set to "2" for CON (continue) responses and "17" for END (terminal) responses.
+     *
+     * @return array Array representation with ussdServiceOp and message
+     */
+    public function toArray(): array
+    {
+        return [
+            'ussdServiceOp' => $this->type === 'END' ? '17' : '2',
+            'message' => $this->message,
+        ];
+    }
+
+    /**
+     * Convert response to JSON format.
+     *
+     * @return string JSON representation of the response
+     */
+    public function toJson(): string
+    {
+        return json_encode($this->toArray());
     }
 }

@@ -134,17 +134,17 @@ class Menu
     /**
      * Render the menu as a formatted string.
      *
-     * Joins all lines with newlines and optionally appends a suffix.
+     * Joins all lines with CRLF line endings and optionally appends a suffix.
      *
      * @param string $suffix Optional suffix to append after all lines
      * @return string Formatted menu text
      */
     public function render(string $suffix = ''): string
     {
-        $body = implode("\n", $this->lines);
+        $body = implode("\r\n", $this->lines);
 
         if ($suffix !== '') {
-            $body .= "\n" . $suffix;
+            $body .= "\r\n" . $suffix;
         }
 
         return $body;

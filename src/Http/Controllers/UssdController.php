@@ -23,9 +23,7 @@ class UssdController
      * @param Machine $machine Machine orchestrator for processing requests
      * @param SessionRepositoryInterface $sessions Session repository for loading contexts
      */
-    public function __construct(protected Machine $machine, protected SessionRepositoryInterface $sessions)
-    {
-    }
+    public function __construct(protected Machine $machine, protected SessionRepositoryInterface $sessions) {}
 
     /**
      * Handle incoming USSD request.
@@ -51,12 +49,12 @@ class UssdController
 
         // Check if user is responding to resume prompt
         if ($response = $this->machine->handleResumeSelection($context, $payload['input'])) {
-            return response((string) $response);
+            return response()->json($response->toArray());
         }
 
         // Process normal flow
         $response = $this->machine->handle($payload);
 
-        return response((string) $response);
+        return response()->json($response->toArray());
     }
 }
