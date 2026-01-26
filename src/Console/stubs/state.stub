@@ -7,7 +7,7 @@ use Vendor\LaravelUssd\Support\Context;
 use Vendor\LaravelUssd\Support\UssdResponse;
 use Vendor\LaravelUssd\Menu\Menu;
 
-class DummyClass extends AbstractState
+class DummyState extends AbstractState
 {
     protected function buildMenu(Context $context): Menu
     {

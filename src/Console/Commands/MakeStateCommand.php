@@ -67,10 +67,14 @@ class MakeStateCommand extends GeneratorCommand
     {
         $stub = $this->files->get($this->getStub());
         
+        // Get the namespace without the class name
+        $qualifiedClass = $this->qualifyClass($name);
+        $namespace = trim(implode('\\', array_slice(explode('\\', $qualifiedClass), 0, -1)), '\\');
+        
         // Replace namespace and class placeholders
         $stub = str_replace(
-            ['DummyNamespace', 'DummyClass'],
-            [$this->qualifyClass($name), class_basename($name)],
+            ['DummyNamespace', 'DummyState'],
+            [$namespace, class_basename($name)],
             $stub
         );
 

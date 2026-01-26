@@ -70,13 +70,13 @@ class MakeFlowCommand extends Command
         $actionNamespace = config('ussd.action_namespace', $rootNamespace . '\\Ussd\\Actions');
         
         $stateStubContent = $this->files->get($stateStubPath);
-        $stateStub = str_replace(['DummyNamespace', 'DummyClass'], [
+        $stateStub = str_replace(['DummyNamespace', 'DummyState'], [
             $stateNamespace,
             $name . 'State'
         ], $stateStubContent);
         
         $actionStubContent = $this->files->get($actionStubPath);
-        $actionStub = str_replace(['DummyNamespace', 'DummyClass'], [
+        $actionStub = str_replace(['DummyNamespace', 'DummyAction'], [
             $actionNamespace,
             $name . 'Action'
         ], $actionStubContent);
