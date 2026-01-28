@@ -192,21 +192,27 @@ class Machine
             return $this->resolveState($context->currentState)->entry($context);
         }
 
-        // User chose to restart from beginning
+        // User chose to restart from beginning — show initial state
         if ($input === ($config['restart_option_key'] ?? '2')) {
             $this->events->dispatch(new SessionRestarted($context));
-            // Reset to initial state and clear all data
-            $context->currentState = $this->config->get('ussd.initial_state');
+            $initialState = $this->config->get('ussd.initial_state');
+            $context->currentState = $initialState;
             $context->data = [];
             $this->sessions->clearContinuity($context);
-            // Start tracking continuity for new session
-            $this->sessions->touchContinuity($context, $context->currentState);
+            $this->sessions->touchContinuity($context, $initialState);
+            $this->sessions->save($context);
 
-            return $this->resolveState($context->currentState)->entry($context);
+            return $this->resolveState($initialState)->entry($context);
         }
 
-        // Invalid option - show prompt again with error message
-        return UssdResponse::continue($this->resumePromptMessage($config, 'Invalid option. Please try again.'));
+        // Invalid option (e.g. "0") - treat as restart; do not re-show continuity prompt
+        $this->events->dispatch(new SessionRestarted($context));
+        $context->currentState = $this->config->get('ussd.initial_state');
+        $context->data = [];
+        $this->sessions->clearContinuity($context);
+        $this->sessions->touchContinuity($context, $context->currentState);
+
+        return $this->resolveState($context->currentState)->entry($context);
     }
 
     /**
