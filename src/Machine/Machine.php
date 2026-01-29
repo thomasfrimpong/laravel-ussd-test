@@ -58,12 +58,19 @@ class Machine
         // Load existing session or create new context
         $context = $this->sessions->load($payload['sessionId'], $payload['msisdn']);
 
+        // When awaiting continuity confirmation and user sent input, handle 1/2 here so they are never treated as previous menu options
+        $input = $payload['input'] ?? '';
+        if (($context->continuity['awaiting_confirmation'] ?? false) && $input !== '') {
+            $response = $this->handleResumeSelection($context, $input);
+            if ($response !== null) {
+                return $response;
+            }
+        }
+
         // Check if we should offer session resume (only on initial request with no input)
         if ($this->shouldOfferResume($context) && empty($payload['input'])) {
             return $this->makeResumePrompt($context);
         }
-
-        $input = $payload['input'] ?? '';
 
         // Resolve the current state class from the context
         $state = $this->resolveState($context->currentState);
@@ -138,8 +145,22 @@ class Machine
             return false;
         }
 
-        // Return true if within timeout period
-        return (time() - $timestamp) <= $timeout;
+        $age = time() - $timestamp;
+
+        // Must be within timeout period
+        if ($age > $timeout) {
+            return false;
+        }
+
+        // Only offer resume if continuity is "stale" (at least resume_min_age seconds old).
+        // This avoids showing the continuity page when the gateway sends empty input for "0"
+        // (e.g. user pressed 0 for "More" but request arrives as empty).
+        $minAge = (int) ($config['resume_min_age'] ?? 30);
+        if ($minAge > 0 && $age < $minAge) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -154,8 +175,10 @@ class Machine
     {
         $config = $this->config->get('ussd.continuity', []);
 
-        // Mark that we're awaiting user's selection
-        $context->continuity['awaiting_confirmation'] = true;
+        // Mark that we're awaiting user's selection (replace array so it persists correctly)
+        $context->continuity = array_merge($context->continuity ?? [], [
+            'awaiting_confirmation' => true,
+        ]);
         $this->sessions->save($context);
 
         return UssdResponse::continue($this->resumePromptMessage($config));
@@ -175,25 +198,30 @@ class Machine
     {
         $config = $this->config->get('ussd.continuity', []);
 
-        // Only process if we're actually awaiting confirmation
+        // Only process if we're actually awaiting confirmation (on the continuity prompt)
         if (!($context->continuity['awaiting_confirmation'] ?? false)) {
             return null;
         }
 
-        // User chose to resume previous session
-        if ($input === ($config['resume_option_key'] ?? '1')) {
-            $this->events->dispatch(new SessionResumed($context));
-            // Restore the state from continuity metadata
-            $context->currentState = $context->continuity['state'] ?? $this->config->get('ussd.initial_state');
-            $this->sessions->clearContinuity($context);
-            // Update continuity for the resumed state
-            $this->sessions->touchContinuity($context, $context->currentState);
+        // Normalize input (gateways may send "1 ", " 2", etc.)
+        $input = trim($input);
+        $resumeKey = trim((string) ($config['resume_option_key'] ?? '1'));
+        $restartKey = trim((string) ($config['restart_option_key'] ?? '2'));
 
-            return $this->resolveState($context->currentState)->entry($context);
+        // Option 1: Resume previous state (return to where user left off)
+        if ($input === $resumeKey) {
+            $this->events->dispatch(new SessionResumed($context));
+            $previousState = $context->continuity['state'] ?? $this->config->get('ussd.initial_state');
+            $context->currentState = $previousState;
+            $this->sessions->clearContinuity($context);
+            $this->sessions->touchContinuity($context, $context->currentState);
+            $this->sessions->save($context);
+
+            return $this->resolveState($previousState)->entry($context);
         }
 
-        // User chose to restart from beginning — show initial state
-        if ($input === ($config['restart_option_key'] ?? '2')) {
+        // Option 2: Start over — show initial state from config
+        if ($input === $restartKey) {
             $this->events->dispatch(new SessionRestarted($context));
             $initialState = $this->config->get('ussd.initial_state');
             $context->currentState = $initialState;

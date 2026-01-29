@@ -47,8 +47,11 @@ class UssdController
         // Load session context
         $context = $this->sessions->load($payload['sessionId'], $payload['msisdn']);
 
-        // Check if user is responding to resume prompt
-        if ($response = $this->machine->handleResumeSelection($context, $payload['input'])) {
+        // Never treat "0" as part of continuity flow — always process as normal input (e.g. "More", Back)
+        $isResumeFlow = ($payload['input'] ?? '') !== '0';
+
+        // Check if user is responding to resume prompt (skip when input is "0")
+        if ($isResumeFlow && ($response = $this->machine->handleResumeSelection($context, $payload['input']))) {
             return response()->json($response->toArray());
         }
 
