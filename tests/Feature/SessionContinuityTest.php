@@ -3,81 +3,188 @@
 namespace Vendor\LaravelUssd\Tests\Feature;
 
 use Vendor\LaravelUssd\Machine\Machine;
+use Vendor\LaravelUssd\Session\SessionRepositoryInterface;
+use Vendor\LaravelUssd\Support\Context;
+use Vendor\LaravelUssd\Tests\Fixtures\AgeState;
+use Vendor\LaravelUssd\Tests\Fixtures\NameState;
 use Vendor\LaravelUssd\Tests\TestCase;
 
 class SessionContinuityTest extends TestCase
 {
+    protected string $msisdn = '+1234567890';
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Enable continuity for these tests
+        // Use the multi-step fixture flow so we can verify data is preserved.
+        config()->set('ussd.initial_state', NameState::class);
+
+        // Enable continuity for these tests.
         config()->set('ussd.continuity.enabled', true);
         config()->set('ussd.continuity.timeout', 900);
+
+        // Allow immediate redials in tests (production guards against showing the
+        // prompt for same-session empty input via resume_min_age).
+        config()->set('ussd.continuity.resume_min_age', 0);
+    }
+
+    protected function machine(): Machine
+    {
+        return $this->app->make(Machine::class);
+    }
+
+    protected function sessions(): SessionRepositoryInterface
+    {
+        return $this->app->make(SessionRepositoryInterface::class);
+    }
+
+    /**
+     * Dial in and advance into the second state, collecting the name, then
+     * abandon the session (no completion).
+     */
+    protected function startAndAbandon(string $sessionId): void
+    {
+        $machine = $this->machine();
+
+        $machine->handle([
+            'sessionId' => $sessionId,
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => '',
+        ]);
+
+        // Provide the name -> advances to AgeState (and persists continuity).
+        $machine->handle([
+            'sessionId' => $sessionId,
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => 'John',
+        ]);
     }
 
     public function test_continuity_prompt_on_redial(): void
     {
-        $machine = $this->app->make(Machine::class);
-        $sessionId = 'continuity-test';
-        $msisdn = '+1234567890';
+        $this->startAndAbandon('session-A');
 
-        // Initial request - starts session
-        $response1 = $machine->handle([
-            'sessionId' => $sessionId,
-            'msisdn' => $msisdn,
+        // Redial with a brand-new session ID (as a gateway would issue after a
+        // cancel/timeout/crash), same phone number.
+        $response = $this->machine()->handle([
+            'sessionId' => 'session-B',
+            'msisdn' => $this->msisdn,
             'serviceCode' => '*123#',
             'input' => '',
         ]);
 
-        $this->assertStringStartsWith('CON', (string) $response1);
+        $text = (string) $response;
 
-        // Simulate new dial-in (new session ID but same MSISDN)
-        // This should trigger continuity prompt
-        $response2 = $machine->handle([
-            'sessionId' => 'new-session-id',
-            'msisdn' => $msisdn, // Same phone number
-            'serviceCode' => '*123#',
-            'input' => '',
-        ]);
-
-        // Should show resume prompt if continuity is working
-        // Note: This test may need adjustment based on actual continuity logic
-        $this->assertStringStartsWith('CON', (string) $response2);
+        $this->assertStringStartsWith('CON', $text);
+        $this->assertStringContainsString(config('ussd.continuity.resume_prompt'), $text);
+        $this->assertStringContainsString(config('ussd.continuity.resume_option_text'), $text);
+        $this->assertStringContainsString(config('ussd.continuity.restart_option_text'), $text);
     }
 
-    public function test_continuity_resume_selection(): void
+    public function test_resume_restores_state_and_data(): void
     {
-        $machine = $this->app->make(Machine::class);
-        $sessionId = 'resume-test';
-        $msisdn = '+1234567890';
+        $this->startAndAbandon('session-A');
 
-        // Create initial session
-        $machine->handle([
-            'sessionId' => $sessionId,
-            'msisdn' => $msisdn,
+        // Redial -> shows the resume prompt.
+        $this->machine()->handle([
+            'sessionId' => 'session-B',
+            'msisdn' => $this->msisdn,
             'serviceCode' => '*123#',
             'input' => '',
         ]);
 
-        // Load context and simulate resume selection
-        $sessions = $this->app->make(\Vendor\LaravelUssd\Session\SessionRepositoryInterface::class);
-        $context = $sessions->load($sessionId, $msisdn);
+        // User chooses to resume.
+        $response = $this->machine()->handle([
+            'sessionId' => 'session-B',
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => config('ussd.continuity.resume_option_key'),
+        ]);
 
-        // Manually set continuity to simulate resume scenario
-        $context->continuity = [
-            'state' => \Vendor\LaravelUssd\Tests\Fixtures\WelcomeState::class,
-            'timestamp' => now()->toIso8601String(),
-            'awaiting_confirmation' => true,
-        ];
-        $sessions->save($context);
+        $text = (string) $response;
 
-        // User selects resume option
-        $response = $machine->handleResumeSelection($context, '1');
+        // Should land back on the state where the user left off.
+        $this->assertStringStartsWith('CON', $text);
+        $this->assertStringContainsString('Enter your age', $text);
 
-        if ($response) {
-            $this->assertStringStartsWith('CON', (string) $response);
-        }
+        // The previously collected data must be preserved.
+        $context = $this->sessions()->load('session-B', $this->msisdn);
+        $this->assertSame(AgeState::class, $context->currentState);
+        $this->assertSame('John', $context->data['name'] ?? null);
+    }
+
+    public function test_restart_clears_previous_progress(): void
+    {
+        $this->startAndAbandon('session-A');
+
+        // Redial -> shows the resume prompt.
+        $this->machine()->handle([
+            'sessionId' => 'session-B',
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => '',
+        ]);
+
+        // User chooses to start over.
+        $response = $this->machine()->handle([
+            'sessionId' => 'session-B',
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => config('ussd.continuity.restart_option_key'),
+        ]);
+
+        $text = (string) $response;
+
+        // Should land on the initial state with the previous data cleared.
+        $this->assertStringStartsWith('CON', $text);
+        $this->assertStringContainsString('Enter your name', $text);
+
+        $context = $this->sessions()->load('session-B', $this->msisdn);
+        $this->assertSame(NameState::class, $context->currentState);
+        $this->assertArrayNotHasKey('name', $context->data);
+    }
+
+    public function test_completed_session_does_not_offer_resume(): void
+    {
+        $machine = $this->machine();
+
+        // Drive the flow to completion.
+        $machine->handle([
+            'sessionId' => 'session-A',
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => '',
+        ]);
+        $machine->handle([
+            'sessionId' => 'session-A',
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => 'John',
+        ]);
+        $end = $machine->handle([
+            'sessionId' => 'session-A',
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => '25',
+        ]);
+
+        $this->assertStringStartsWith('END', (string) $end);
+
+        // Redial: the finished session must not be offered for resume.
+        $response = $this->machine()->handle([
+            'sessionId' => 'session-B',
+            'msisdn' => $this->msisdn,
+            'serviceCode' => '*123#',
+            'input' => '',
+        ]);
+
+        $text = (string) $response;
+
+        $this->assertStringStartsWith('CON', $text);
+        $this->assertStringContainsString('Enter your name', $text);
+        $this->assertStringNotContainsString(config('ussd.continuity.resume_prompt'), $text);
     }
 }
-

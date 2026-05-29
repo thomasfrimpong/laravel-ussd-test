@@ -15,7 +15,12 @@ interface SessionRepositoryInterface
     /**
      * Load session context from storage.
      *
-     * Returns existing context if found, or creates a new context with initial state.
+     * Returns the existing per-session context if found. Otherwise, on a fresh
+     * dial-in (including after a cancel/timeout/crash where the gateway issued a
+     * new session ID), implementations should fall back to any MSISDN-level
+     * continuity snapshot and attach it to a new context so the previous
+     * progress can be offered for resume. When neither exists, a new context
+     * with the configured initial state is returned.
      *
      * @param string $sessionId Unique session identifier
      * @param string $msisdn Phone number of the user
@@ -34,6 +39,9 @@ interface SessionRepositoryInterface
     /**
      * Clear session data from storage.
      *
+     * Implementations should also drop the MSISDN-level continuity snapshot so
+     * that a normally-completed session is never offered for resume.
+     *
      * @param string $sessionId Unique session identifier
      * @param string $msisdn Phone number of the user
      * @return void
@@ -43,7 +51,10 @@ interface SessionRepositoryInterface
     /**
      * Update continuity metadata for session resume feature.
      *
-     * Stores the current state and timestamp so the session can be resumed later.
+     * Stores the current state and timestamp so the session can be resumed
+     * later. Implementations should additionally persist an MSISDN-level
+     * snapshot (state plus collected data, keyed independently of the session
+     * ID) so a later dial-in with a new session ID can resume this progress.
      *
      * @param Context $context Session context
      * @param string $state Fully qualified class name of the current state
@@ -55,7 +66,8 @@ interface SessionRepositoryInterface
     /**
      * Clear continuity metadata.
      *
-     * Removes continuity data when session is completed or restarted.
+     * Removes continuity data when the session is completed or restarted,
+     * including the MSISDN-level snapshot used for cross-session resume.
      *
      * @param Context $context Session context
      * @return void

@@ -175,7 +175,9 @@ class Machine
     {
         $config = $this->config->get('ussd.continuity', []);
 
-        // Mark that we're awaiting user's selection (replace array so it persists correctly)
+        // Mark that we're awaiting user's selection (replace array so it persists correctly).
+        // This only writes the per-session record via save(); the authoritative
+        // MSISDN-level continuity snapshot (its stored "state") is left untouched.
         $context->continuity = array_merge($context->continuity ?? [], [
             'awaiting_confirmation' => true,
         ]);
@@ -208,7 +210,10 @@ class Machine
         $resumeKey = trim((string) ($config['resume_option_key'] ?? '1'));
         $restartKey = trim((string) ($config['restart_option_key'] ?? '2'));
 
-        // Option 1: Resume previous state (return to where user left off)
+        // Option 1: Resume previous state (return to where user left off).
+        // The collected data was already restored onto the context by the
+        // repository's load() from the MSISDN-level snapshot, so resuming keeps
+        // the user's prior progress intact.
         if ($input === $resumeKey) {
             $this->events->dispatch(new SessionResumed($context));
             $previousState = $context->continuity['state'] ?? $this->config->get('ussd.initial_state');
